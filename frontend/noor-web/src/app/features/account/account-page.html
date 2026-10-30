@@ -1,0 +1,509 @@
+<div class="container">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span>My account</span>
+    @if (section() !== 'overview') {
+      <span class="sep">/</span>
+      <span>{{ sectionTitle() }}</span>
+    }
+  </nav>
+</div>
+
+<header class="account-head">
+  <div class="container account-head__inner">
+    <div>
+      <p class="eyebrow">Client atelier</p>
+      <h1>{{ section() === 'overview' ? 'Welcome back, ' + firstName() : sectionTitle() }}</h1>
+    </div>
+    <p class="account-head__email">{{ session.user()?.email }}</p>
+  </div>
+</header>
+
+<div class="container account">
+  <aside class="account-nav">
+    <div class="account-nav__user">
+      <span class="account-nav__avatar">{{ initials() }}</span>
+      <div>
+        <strong>{{ session.user()?.fullName }}</strong>
+        <p>Client since {{ session.user()?.createdAt | date: 'MMM y' }}</p>
+      </div>
+    </div>
+
+    <nav class="account-nav__links" aria-label="Account">
+      @for (item of sections; track item.id) {
+        <a
+          [routerLink]="item.id === 'overview' ? '/account' : '/account/' + item.id"
+          [class.is-active]="section() === item.id"
+        >
+          <app-icon [name]="item.icon" [size]="16" />
+          {{ item.label }}
+          @if (item.id === 'wishlist' && wishlist.count() > 0) {
+            <span class="account-nav__badge">{{ wishlist.count() }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="account-nav__foot">
+      <a routerLink="/contact" class="account-nav__help">
+        <app-icon name="mail" [size]="15" />
+        Need help? Client care
+      </a>
+      <button type="button" class="account-nav__signout" (click)="signOut()">
+        <app-icon name="logout" [size]="15" />
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <main class="account-body">
+    @switch (section()) {
+      @case ('overview') {
+        <section class="welcome">
+          <div>
+            <p class="eyebrow">A quiet place for your pieces</p>
+            <h2>Good to see you, {{ firstName() }}.</h2>
+            <p>
+              Follow your orders, revisit saved pieces, and keep your details ready for a
+              faster checkout.
+            </p>
+          </div>
+          <a class="btn" routerLink="/shop">
+            Continue shopping
+            <app-icon name="arrow-right" [size]="14" />
+          </a>
+        </section>
+
+        <div class="stats">
+          <a class="stat" routerLink="/account/orders">
+            <span class="stat__value">{{ orders().length }}</span>
+            <span class="stat__label">Orders placed</span>
+            <app-icon name="arrow-up-right" [size]="15" />
+          </a>
+          <a class="stat" routerLink="/account/orders">
+            <span class="stat__value">{{ activeOrders() }}</span>
+            <span class="stat__label">In progress</span>
+            <app-icon name="arrow-up-right" [size]="15" />
+          </a>
+          <a class="stat" routerLink="/account/wishlist">
+            <span class="stat__value">{{ wishlist.count() }}</span>
+            <span class="stat__label">Saved pieces</span>
+            <app-icon name="arrow-up-right" [size]="15" />
+          </a>
+          <a class="stat" routerLink="/account/addresses">
+            <span class="stat__value">{{ addresses().length }}</span>
+            <span class="stat__label">Saved addresses</span>
+            <app-icon name="arrow-up-right" [size]="15" />
+          </a>
+        </div>
+
+        <div class="overview-grid">
+          <section class="panel overview-panel">
+            <div class="overview-panel__head">
+              <h3>Recent orders</h3>
+              <a routerLink="/account/orders" class="section-head__link">View all</a>
+            </div>
+
+            @if (ordersLoading()) {
+              <p class="muted small">Loading your orders…</p>
+            } @else if (recentOrders().length === 0) {
+              <div class="overview-empty">
+                <p>No orders yet — your first piece is waiting.</p>
+                <a class="link-underline" routerLink="/shop">Explore the collection</a>
+              </div>
+            } @else {
+              <div class="mini-orders">
+                @for (order of recentOrders(); track order.id) {
+                  <a class="mini-order" [routerLink]="['/account/orders', order.id]">
+                    <span class="mini-order__media">
+                      @if (order.firstItemImage) {
+                        <img [src]="order.firstItemImage" [alt]="order.firstItemName ?? ''" />
+                      }
+                    </span>
+                    <span class="mini-order__info">
+                      <strong>{{ order.orderNumber }}</strong>
+                      <span>{{ order.createdAt | date: 'mediumDate' }}</span>
+                      <span class="mini-order__status">
+                        {{ order.itemCount }} {{ order.itemCount === 1 ? 'piece' : 'pieces' }}
+                        ·
+                        <em class="status status--{{ order.status.toLowerCase() }}">{{ order.status }}</em>
+                      </span>
+                    </span>
+                    <span class="mini-order__total">
+                      {{ order.total | currency: 'INR' : 'symbol' : '1.0-0' }}
+                    </span>
+                  </a>
+                }
+              </div>
+            }
+          </section>
+
+          <section class="panel overview-panel">
+            <div class="overview-panel__head">
+              <h3>Default delivery</h3>
+              <a routerLink="/account/addresses" class="section-head__link">Manage</a>
+            </div>
+
+            @if (defaultAddress(); as address) {
+              <div class="mini-address">
+                <p class="mini-address__label">{{ address.label }}</p>
+                <p class="mini-address__name">{{ address.fullName }}</p>
+                <p>{{ address.line1 }}</p>
+                @if (address.line2) {
+                  <p>{{ address.line2 }}</p>
+                }
+                <p>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
+                <p>{{ address.country }}</p>
+                <p class="mini-address__phone">{{ address.phone }}</p>
+              </div>
+            } @else {
+              <div class="overview-empty">
+                <p>No delivery address saved yet.</p>
+                <a class="link-underline" routerLink="/account/addresses">Add an address</a>
+              </div>
+            }
+          </section>
+        </div>
+      }
+
+      @case ('orders') {
+        <div class="section-title">
+          <div>
+            <h2>Your orders</h2>
+            <p class="muted small">
+              {{ orders().length }} {{ orders().length === 1 ? 'order' : 'orders' }} placed
+              with Noor.
+            </p>
+          </div>
+        </div>
+
+        @if (ordersLoading()) {
+          <div class="loading-state"><span class="spinner"></span> Loading orders</div>
+        } @else if (orders().length === 0) {
+          <div class="empty-state">
+            <h3>No orders yet.</h3>
+            <p>When you place an order, it will appear here with its journey.</p>
+            <a class="btn" routerLink="/shop">Explore the collection</a>
+          </div>
+        } @else {
+          <div class="order-list">
+            @for (order of orders(); track order.id) {
+              <article class="order-card">
+                <header class="order-card__head">
+                  <div>
+                    <p class="order-card__number">{{ order.orderNumber }}</p>
+                    <p class="order-card__date">{{ order.createdAt | date: 'mediumDate' }}</p>
+                  </div>
+                  <div class="order-card__badges">
+                    <span class="status status--{{ order.status.toLowerCase() }}">{{ order.status }}</span>
+                    <span class="status status--{{ order.paymentStatus === 'Paid' ? 'paid' : 'unpaid' }}">
+                      {{ order.paymentStatus }}
+                    </span>
+                  </div>
+                </header>
+
+                <div class="order-card__body">
+                  <span class="order-card__media">
+                    @if (order.firstItemImage) {
+                      <img [src]="order.firstItemImage" [alt]="order.firstItemName ?? ''" />
+                    }
+                  </span>
+                  <div class="order-card__info">
+                    <p class="order-card__name">{{ order.firstItemName ?? 'Your order' }}</p>
+                    <p class="muted small">
+                      {{ order.itemCount }} {{ order.itemCount === 1 ? 'piece' : 'pieces' }} ·
+                      Cash on delivery
+                    </p>
+                  </div>
+                  <div class="order-card__total">
+                    <span class="muted tiny uppercase">Total</span>
+                    <strong>{{ order.total | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+                  </div>
+                </div>
+
+                <footer class="order-card__foot">
+                  <a class="btn btn--sm btn--outline" [routerLink]="['/account/orders', order.id]">
+                    View order
+                  </a>
+                  @if (order.status === 'Pending' || order.status === 'Confirmed') {
+                    <button
+                      type="button"
+                      class="order-card__cancel"
+                      [disabled]="cancelingId() === order.id"
+                      (click)="cancelOrder(order)"
+                    >
+                      {{ cancelingId() === order.id ? 'Cancelling…' : 'Cancel order' }}
+                    </button>
+                  }
+                </footer>
+              </article>
+            }
+          </div>
+        }
+      }
+
+      @case ('addresses') {
+        <div class="section-title">
+          <div>
+            <h2>Delivery addresses</h2>
+            <p class="muted small">Keep your addresses ready for a quieter checkout.</p>
+          </div>
+          <button type="button" class="btn btn--sm" (click)="openNewAddress()">
+            <app-icon name="plus" [size]="14" />
+            Add address
+          </button>
+        </div>
+
+        @if (addressFormOpen()) {
+          <div class="panel address-form">
+            <div class="address-form__head">
+              <h3>{{ editingAddressId() ? 'Edit address' : 'New address' }}</h3>
+              <button type="button" class="icon-btn" (click)="cancelAddressForm()" aria-label="Close">
+                <app-icon name="close" [size]="18" />
+              </button>
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="label">Label</label>
+                <input id="label" name="label" [(ngModel)]="address.label" placeholder="Home" required />
+              </div>
+              <div class="field">
+                <label for="fullName">Full name</label>
+                <input id="fullName" name="fullName" [(ngModel)]="address.fullName" required />
+              </div>
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" [(ngModel)]="address.phone" placeholder="+91 98765 43210" required />
+              </div>
+              <div class="field">
+                <label for="line1">Address line 1</label>
+                <input id="line1" name="line1" [(ngModel)]="address.line1" required />
+              </div>
+              <div class="field span-2">
+                <label for="line2">Address line 2 (optional)</label>
+                <input id="line2" name="line2" [(ngModel)]="address.line2" />
+              </div>
+              <div class="field">
+                <label for="city">City</label>
+                <input id="city" name="city" [(ngModel)]="address.city" required />
+              </div>
+              <div class="field">
+                <label for="state">State / UT</label>
+                <input id="state" name="state" [(ngModel)]="address.state" placeholder="Telangana" required />
+              </div>
+              <div class="field">
+                <label for="postalCode">PIN code</label>
+                <input id="postalCode" name="postalCode" [(ngModel)]="address.postalCode" placeholder="500034" required />
+              </div>
+              <div class="field">
+                <label for="country">Country</label>
+                <input id="country" name="country" [(ngModel)]="address.country" readonly />
+              </div>
+              <label class="checkbox span-2">
+                <input type="checkbox" name="isDefault" [(ngModel)]="address.isDefault" />
+                Set as my default delivery address
+              </label>
+            </div>
+            <p class="field-hint">Noor currently delivers within India only.</p>
+
+            <div class="address-form__actions">
+              <button type="button" class="btn" [disabled]="savingAddress()" (click)="saveAddress()">
+                {{ savingAddress() ? 'Saving…' : 'Save address' }}
+              </button>
+              <button type="button" class="btn btn--ghost" (click)="cancelAddressForm()">
+                Cancel
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (addressesLoading()) {
+          <div class="loading-state"><span class="spinner"></span> Loading addresses</div>
+        } @else if (addresses().length === 0 && !addressFormOpen()) {
+          <div class="empty-state">
+            <h3>No addresses saved.</h3>
+            <p>Add a delivery address to make checkout a little quieter.</p>
+            <button type="button" class="btn" (click)="openNewAddress()">Add an address</button>
+          </div>
+        } @else {
+          <div class="address-grid">
+            @for (address of addresses(); track address.id) {
+              <article class="address-tile" [class.is-default]="address.isDefault">
+                <header>
+                  <span class="address-tile__label">{{ address.label }}</span>
+                  @if (address.isDefault) {
+                    <span class="badge badge--new">Default</span>
+                  }
+                </header>
+                <p class="address-tile__name">{{ address.fullName }}</p>
+                <p>{{ address.line1 }}</p>
+                @if (address.line2) {
+                  <p>{{ address.line2 }}</p>
+                }
+                <p>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
+                <p>{{ address.country }}</p>
+                <p class="address-tile__phone">{{ address.phone }}</p>
+
+                <footer>
+                  <button type="button" (click)="editAddress(address)">Edit</button>
+                  @if (!address.isDefault) {
+                    <button type="button" (click)="makeDefault(address)">Make default</button>
+                  }
+                  <button
+                    type="button"
+                    class="is-danger"
+                    [disabled]="deletingAddressId() === address.id"
+                    (click)="deleteAddress(address)"
+                  >
+                    {{ deletingAddressId() === address.id ? 'Removing…' : 'Remove' }}
+                  </button>
+                </footer>
+              </article>
+            }
+          </div>
+        }
+      }
+
+      @case ('wishlist') {
+        <div class="section-title">
+          <div>
+            <h2>Saved pieces</h2>
+            <p class="muted small">
+              {{ wishlistVisible().length }}
+              {{ wishlistVisible().length === 1 ? 'piece' : 'pieces' }} kept for later.
+            </p>
+          </div>
+        </div>
+
+        @if (wishlistLoading()) {
+          <div class="loading-state"><span class="spinner"></span> Loading wishlist</div>
+        } @else if (wishlistVisible().length === 0) {
+          <div class="empty-state">
+            <h3>Nothing saved yet.</h3>
+            <p>
+              Tap the heart on any piece to keep it here. Your wishlist travels with your
+              account.
+            </p>
+            <a class="btn" routerLink="/shop">Explore the collection</a>
+          </div>
+        } @else {
+          <div class="product-grid">
+            @for (item of wishlistVisible(); track item.product.id) {
+              <app-product-card [product]="item.product" />
+            }
+          </div>
+        }
+      }
+
+      @case ('profile') {
+        <div class="section-title">
+          <div>
+            <h2>Profile &amp; password</h2>
+            <p class="muted small">Your details, kept private and ready for checkout.</p>
+          </div>
+        </div>
+
+        <div class="profile-grid">
+          <section class="panel">
+            <h3>Personal details</h3>
+            <p class="profile__note">Used on orders and delivery notes.</p>
+
+            <form class="form-stack" (ngSubmit)="saveProfile()" novalidate>
+              <div class="field">
+                <label for="profileName">Full name</label>
+                <input id="profileName" name="profileName" [(ngModel)]="profile.fullName" required />
+              </div>
+              <div class="field">
+                <label for="profileEmail">Email address</label>
+                <input
+                  id="profileEmail"
+                  [value]="session.user()?.email"
+                  disabled
+                  class="is-disabled"
+                />
+                <p class="field-hint">Contact client care to change your email.</p>
+              </div>
+              <div class="field">
+                <label for="profilePhone">Phone</label>
+                <input id="profilePhone" name="profilePhone" [(ngModel)]="profile.phone" />
+              </div>
+              <label class="checkbox">
+                <input type="checkbox" name="marketing" [(ngModel)]="profile.marketingOptIn" />
+                Send me the Noor letter — new pieces, atelier notes, and early access.
+              </label>
+              <button type="submit" class="btn" [disabled]="savingProfile()">
+                {{ savingProfile() ? 'Saving…' : 'Save details' }}
+              </button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <h3>Change password</h3>
+            <p class="profile__note">
+              At least 8 characters, with uppercase, lowercase, and a number.
+            </p>
+
+            <form class="form-stack" (ngSubmit)="changePassword()" novalidate>
+              <div class="field">
+                <label for="currentPassword">Current password</label>
+                <input
+                  id="currentPassword"
+                  type="password"
+                  name="currentPassword"
+                  [(ngModel)]="passwords.currentPassword"
+                  autocomplete="current-password"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="newPassword">New password</label>
+                <input
+                  id="newPassword"
+                  type="password"
+                  name="newPassword"
+                  [(ngModel)]="passwords.newPassword"
+                  autocomplete="new-password"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="confirmPassword">Confirm new password</label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  name="confirmPassword"
+                  [(ngModel)]="passwords.confirm"
+                  autocomplete="new-password"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn" [disabled]="savingPassword()">
+                {{ savingPassword() ? 'Updating…' : 'Update password' }}
+              </button>
+            </form>
+          </section>
+        </div>
+
+        <section class="panel account-meta">
+          <div>
+            <p class="muted tiny uppercase">Member since</p>
+            <p>{{ session.user()?.createdAt | date: 'longDate' }}</p>
+          </div>
+          <div>
+            <p class="muted tiny uppercase">Account</p>
+            <p>{{ session.user()?.role === 'Admin' ? 'Atelier administrator' : 'Noor client' }}</p>
+          </div>
+          <div>
+            <p class="muted tiny uppercase">Marketing</p>
+            <p>{{ session.user()?.marketingOptIn ? 'Subscribed to the Noor letter' : 'Not subscribed' }}</p>
+          </div>
+          @if (session.isAdmin()) {
+            <a class="btn btn--sm btn--outline" routerLink="/admin">Open atelier admin</a>
+          }
+        </section>
+      }
+    }
+  </main>
+</div>

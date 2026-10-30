@@ -1,0 +1,233 @@
+.footer {
+  background: var(--ink);
+  color: rgba(253, 250, 244, 0.68);
+  padding-top: clamp(56px, 7vw, 96px);
+}
+
+.footer__top {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(40px, 7vw, 100px);
+  padding-bottom: clamp(40px, 5vw, 64px);
+  border-bottom: 1px solid rgba(253, 250, 244, 0.12);
+}
+
+.footer__logo {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--surface);
+}
+
+.footer__logo-name {
+  font-family: var(--serif);
+  font-size: 2.4rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.footer__logo-tag {
+  font-size: 7px;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  padding-left: 0.2em;
+}
+
+.footer__intro {
+  max-width: 400px;
+  margin: 22px 0 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(253, 250, 244, 0.55);
+}
+
+.footer__social {
+  display: flex;
+  gap: 8px;
+  margin-top: 26px;
+}
+
+.footer__social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(253, 250, 244, 0.18);
+  border-radius: 50%;
+  color: rgba(253, 250, 244, 0.75);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.footer__social a:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--white);
+}
+
+.footer__newsletter h3 {
+  margin-top: 12px;
+  color: var(--surface);
+  font-size: clamp(1.7rem, 2.4vw, 2.35rem);
+}
+
+.footer__note {
+  margin-top: 12px;
+  max-width: 440px;
+  font-size: 12px;
+  line-height: 1.75;
+  color: rgba(253, 250, 244, 0.52);
+}
+
+.footer__form {
+  display: flex;
+  gap: 0;
+  margin-top: 24px;
+  max-width: 440px;
+}
+
+.footer__form input {
+  flex: 1;
+  min-width: 0;
+  height: 50px;
+  padding: 0 16px;
+  border: 1px solid rgba(253, 250, 244, 0.24);
+  border-right: 0;
+  background: rgba(253, 250, 244, 0.05);
+  color: var(--surface);
+  font-size: 13px;
+}
+
+.footer__form input::placeholder {
+  color: rgba(253, 250, 244, 0.35);
+}
+
+.footer__form input:focus {
+  outline: none;
+  border-color: var(--gold-light);
+}
+
+.footer__form .btn {
+  min-height: 50px;
+  border-radius: 0;
+}
+
+.footer__privacy {
+  margin-top: 10px;
+  font-size: 9.5px;
+  color: rgba(253, 250, 244, 0.35);
+}
+
+.footer__links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding-block: clamp(36px, 5vw, 56px);
+  border-bottom: 1px solid rgba(253, 250, 244, 0.12);
+}
+
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.footer__col h4 {
+  margin-bottom: 8px;
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.footer__col a,
+.footer__col p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: rgba(253, 250, 244, 0.55);
+}
+
+.footer__col a {
+  transition: color 0.2s ease;
+}
+
+.footer__col a:hover {
+  color: var(--surface);
+}
+
+.footer__hours {
+  margin-top: 6px !important;
+  font-size: 9.5px !important;
+  letter-spacing: 0.06em;
+  color: rgba(253, 250, 244, 0.32) !important;
+}
+
+.footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding-block: 22px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(253, 250, 244, 0.38);
+}
+
+.footer__bottom p {
+  margin: 0;
+}
+
+.footer__demo {
+  text-transform: none;
+  letter-spacing: 0.03em;
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+.footer__payments {
+  display: flex;
+  gap: 6px;
+}
+
+.footer__payments span {
+  padding: 3px 7px;
+  border: 1px solid rgba(253, 250, 244, 0.18);
+  font-size: 7.5px;
+  letter-spacing: 0.12em;
+}
+
+@media (max-width: 900px) {
+  .footer__top {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .footer__links {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 24px;
+  }
+  .footer__bottom {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer__form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .footer__form input {
+    border-right: 1px solid rgba(253, 250, 244, 0.24);
+  }
+  .footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

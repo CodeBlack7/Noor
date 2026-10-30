@@ -1,0 +1,233 @@
+<div class="announce">
+  <div class="container announce__inner">
+    <p>Complimentary shipping over ₹1,999</p>
+    <p class="announce__mid">Considered pieces, made to be worn</p>
+    <a routerLink="/shop" [queryParams]="{ sort: 'newest' }">
+      Discover the autumn edit
+      <app-icon name="arrow-right" [size]="13" />
+    </a>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container header__inner">
+    <button
+      type="button"
+      class="header__burger"
+      (click)="menuOpen.set(true)"
+      aria-label="Open menu"
+    >
+      <app-icon name="menu" [size]="22" />
+    </button>
+
+    <nav class="header__nav" aria-label="Primary">
+      <a routerLink="/shop" class="header__link">Shop all</a>
+      <a routerLink="/shop" [queryParams]="{ sort: 'newest' }" class="header__link">New in</a>
+      @for (category of catalog.categories().slice(0, 3); track category.id) {
+        <a
+          routerLink="/shop"
+          [queryParams]="{ category: category.slug }"
+          class="header__link"
+        >
+          {{ category.name }}
+        </a>
+      }
+      <a routerLink="/our-story" class="header__link">Our story</a>
+    </nav>
+
+    <a class="brand" routerLink="/" aria-label="Noor home">
+      <span class="brand__name">Noor</span>
+      <span class="brand__tag">Modest Atelier</span>
+    </a>
+
+    <div class="header__actions">
+      <button
+        type="button"
+        class="header__action"
+        (click)="toggleSearch()"
+        aria-label="Search"
+        [attr.aria-expanded]="searchOpen()"
+      >
+        <app-icon name="search" [size]="19" />
+      </button>
+
+      <div class="account">
+        <button
+          type="button"
+          class="header__action"
+          (click)="accountOpen.set(!accountOpen())"
+          aria-label="Account"
+          [attr.aria-expanded]="accountOpen()"
+        >
+          <app-icon name="user" [size]="19" />
+        </button>
+
+        @if (accountOpen()) {
+          <button
+            type="button"
+            class="account__scrim"
+            (click)="accountOpen.set(false)"
+            aria-label="Close account menu"
+          ></button>
+
+          <div class="account__menu">
+            @if (session.isAuthenticated()) {
+              <div class="account__greeting">
+                <p class="eyebrow eyebrow--plain">Welcome back</p>
+                <p class="account__name">{{ session.user()?.fullName }}</p>
+                <p class="account__email">{{ session.user()?.email }}</p>
+              </div>
+              <div class="account__links">
+                <a routerLink="/account">
+                  <app-icon name="user" [size]="15" />
+                  My account
+                </a>
+                <a routerLink="/account/orders">
+                  <app-icon name="package" [size]="15" />
+                  Orders
+                </a>
+                <a routerLink="/account/wishlist">
+                  <app-icon name="heart" [size]="15" />
+                  Wishlist
+                </a>
+                @if (session.isAdmin()) {
+                  <a routerLink="/admin">
+                    <app-icon name="grid" [size]="15" />
+                    Atelier admin
+                  </a>
+                }
+              </div>
+              <button type="button" class="account__signout" (click)="logout()">
+                <app-icon name="logout" [size]="15" />
+                Sign out
+              </button>
+            } @else {
+              <div class="account__greeting">
+                <p class="eyebrow eyebrow--plain">Welcome to Noor</p>
+                <p class="account__name">A quiet place for considered pieces.</p>
+              </div>
+              <div class="account__cta">
+                <a class="btn btn--block" routerLink="/login" [queryParams]="{ returnUrl: '/account' }">
+                  Sign in
+                </a>
+                <a class="btn btn--outline btn--block" routerLink="/register">Create account</a>
+              </div>
+              <p class="account__note">
+                Save your favourite pieces, follow your orders, and check out faster.
+              </p>
+            }
+          </div>
+        }
+      </div>
+
+      <a class="header__action header__wish" routerLink="/account/wishlist" aria-label="Wishlist">
+        <app-icon name="heart" [size]="19" />
+        @if (wishlist.count() > 0) {
+          <span class="bubble">{{ wishlist.count() }}</span>
+        }
+      </a>
+
+      <button
+        type="button"
+        class="header__action header__bag"
+        (click)="cart.open()"
+        aria-label="Open shopping bag"
+      >
+        <app-icon name="bag" [size]="19" />
+        @if (cart.itemCount() > 0) {
+          <span class="bubble bubble--dark">{{ cart.itemCount() }}</span>
+        }
+      </button>
+    </div>
+  </div>
+
+  @if (searchOpen()) {
+    <div class="search">
+      <form class="container search__form" (ngSubmit)="submitSearch($event)">
+        <app-icon name="search" [size]="20" />
+        <input
+          #searchInput
+          type="search"
+          name="search"
+          [(ngModel)]="searchTerm"
+          placeholder="Search burqas, abayas, hijabs, prayer wear…"
+          autocomplete="off"
+          aria-label="Search the atelier"
+        />
+        <button class="btn btn--sm" type="submit">Search</button>
+        <button
+          type="button"
+          class="icon-btn"
+          (click)="searchOpen.set(false)"
+          aria-label="Close search"
+        >
+          <app-icon name="close" [size]="18" />
+        </button>
+      </form>
+      <div class="container search__suggestions">
+        <span>Try</span>
+        <a routerLink="/shop" [queryParams]="{ category: 'burqas' }">Everyday burqas</a>
+        <a routerLink="/shop" [queryParams]="{ category: 'hijabs' }">Silk hijabs</a>
+        <a routerLink="/shop" [queryParams]="{ sort: 'newest' }">New arrivals</a>
+        <a routerLink="/shop" [queryParams]="{ featured: true }">Atelier favourites</a>
+      </div>
+    </div>
+  }
+</header>
+
+@if (menuOpen()) {
+  <div class="mobile">
+    <button
+      type="button"
+      class="mobile__scrim"
+      (click)="menuOpen.set(false)"
+      aria-label="Close menu"
+    ></button>
+
+    <aside class="mobile__panel" aria-label="Mobile menu">
+      <div class="mobile__head">
+        <a class="brand brand--small" routerLink="/">
+          <span class="brand__name">Noor</span>
+          <span class="brand__tag">Modest Atelier</span>
+        </a>
+        <button
+          type="button"
+          class="icon-btn"
+          (click)="menuOpen.set(false)"
+          aria-label="Close menu"
+        >
+          <app-icon name="close" [size]="20" />
+        </button>
+      </div>
+
+      <nav class="mobile__nav">
+        <a routerLink="/shop">Shop all</a>
+        <a routerLink="/shop" [queryParams]="{ sort: 'newest' }">New in</a>
+        @for (category of catalog.categories(); track category.id) {
+          <a routerLink="/shop" [queryParams]="{ category: category.slug }">
+            {{ category.name }}
+            <span>{{ category.productCount }}</span>
+          </a>
+        }
+        <a routerLink="/our-story">Our story</a>
+        <a routerLink="/size-guide">Size guide</a>
+        <a routerLink="/contact">Contact</a>
+      </nav>
+
+      <div class="mobile__account">
+        @if (session.isAuthenticated()) {
+          <p class="mobile__signed">Signed in as {{ session.user()?.email }}</p>
+          <a class="btn btn--outline btn--block" routerLink="/account">My account</a>
+          <button type="button" class="btn btn--ghost btn--block" (click)="logout()">Sign out</button>
+        } @else {
+          <a class="btn btn--block" routerLink="/login" [queryParams]="{ returnUrl: '/account' }">
+            Sign in
+          </a>
+          <a class="btn btn--outline btn--block" routerLink="/register">Create account</a>
+        }
+      </div>
+
+      <p class="mobile__foot">care@noor.store · Complimentary shipping over ₹1,999</p>
+    </aside>
+  </div>
+}

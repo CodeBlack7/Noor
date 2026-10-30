@@ -1,0 +1,67 @@
+<article class="card">
+  <a class="card__media" [routerLink]="['/product', product().slug]">
+    @if (product().primaryImageUrl) {
+      <img [src]="product().primaryImageUrl" [alt]="product().name" loading="lazy" />
+    } @else {
+      <div class="card__placeholder"></div>
+    }
+
+    <div class="card__badges">
+      @if (!product().inStock) {
+        <span class="badge badge--sold">Sold out</span>
+      } @else if (discount() > 0) {
+        <span class="badge badge--sale">-{{ discount() }}%</span>
+      } @else if (product().isNew) {
+        <span class="badge badge--new">New</span>
+      }
+    </div>
+
+    <span class="card__view">
+      View piece
+      <app-icon name="arrow-right" [size]="14" />
+    </span>
+  </a>
+
+  <button
+    type="button"
+    class="card__save"
+    [class.is-saved]="saved()"
+    (click)="toggleWishlist($event)"
+    [attr.aria-label]="saved() ? 'Remove from wishlist' : 'Save to wishlist'"
+  >
+    <app-icon name="heart" [size]="17" />
+  </button>
+
+  <div class="card__body">
+    <p class="card__cat">{{ product().categoryName }}</p>
+    <h3 class="card__name">
+      <a [routerLink]="['/product', product().slug]">{{ product().name }}</a>
+    </h3>
+
+    <div class="card__meta">
+      <span class="card__price">{{ product().price | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+      @if (product().compareAtPrice) {
+        <s class="card__compare">
+          {{ product().compareAtPrice | currency: 'INR' : 'symbol' : '1.0-0' }}
+        </s>
+      }
+      <span class="card__colors" aria-hidden="true">
+        @for (color of visibleColors(); track color.hex) {
+          <i [style.background]="color.hex" [attr.title]="color.name"></i>
+        }
+      </span>
+    </div>
+
+    <div class="card__rating">
+      @if (product().reviewCount > 0) {
+        <app-rating-stars
+          [rating]="product().averageRating"
+          [count]="product().reviewCount"
+          [showCount]="true"
+        />
+      } @else {
+        <span class="card__new">New arrival</span>
+      }
+    </div>
+  </div>
+</article>

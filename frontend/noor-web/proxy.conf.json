@@ -1,0 +1,20 @@
+{
+  "/api": {
+    "target": "http://localhost:5080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "warn"
+  },
+  "/images": {
+    "target": "http://localhost:5080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "warn"
+  },
+  "/uploads": {
+    "target": "http://localhost:5080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "warn"
+  }
+}

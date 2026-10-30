@@ -1,0 +1,171 @@
+<header class="admin-page-head">
+  <div>
+    <p class="eyebrow">The atelier desk</p>
+    <h1>Orders</h1>
+    <p class="admin-page-sub">
+      {{ totalCount() }} {{ totalCount() === 1 ? 'order' : 'orders' }} in the ledger.
+      Update status, add tracking, and keep clients informed.
+    </p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn--sm btn--outline" routerLink="/admin/dashboard">
+      <app-icon name="grid" [size]="13" />
+      Dashboard
+    </a>
+  </div>
+</header>
+
+<form class="admin-toolbar" (ngSubmit)="applyFilters()">
+  <div class="field admin-toolbar__search">
+    <label for="orderSearch">Search</label>
+    <input
+      id="orderSearch"
+      name="orderSearch"
+      [(ngModel)]="search"
+      placeholder="Order number, email, or client name"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="field">
+    <label for="orderStatus">Status</label>
+    <select id="orderStatus" name="orderStatus" [(ngModel)]="statusFilter">
+      <option value="">All statuses</option>
+      @for (status of statuses; track status) {
+        <option [value]="status">{{ status }}</option>
+      }
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn--sm">Apply</button>
+  <button type="button" class="btn btn--sm btn--ghost" (click)="resetFilters()">
+    Reset
+  </button>
+  <span class="admin-toolbar__spacer"></span>
+  <span class="admin-toolbar__count">{{ totalCount() }} results</span>
+</form>
+
+@if (loading()) {
+  <div class="loading-state"><span class="spinner"></span> Loading the order ledger</div>
+} @else if (failed()) {
+  <div class="admin-empty">
+    <p>The order ledger could not load.</p>
+    <button type="button" class="btn btn--sm btn--outline mt-16" (click)="load()">
+      Try again
+    </button>
+  </div>
+} @else if (items().length === 0) {
+  <div class="admin-empty">
+    <p>No orders match this view.</p>
+    <button type="button" class="btn btn--sm btn--outline mt-16" (click)="resetFilters()">
+      Clear filters
+    </button>
+  </div>
+} @else {
+  <div class="panel admin-panel--flush table-wrap">
+    <table class="data-table order-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Placed</th>
+          <th>Pieces</th>
+          <th>Payment</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (order of items(); track order.id) {
+          <tr>
+            <td>
+              <div class="order-cell">
+                <span class="order-cell__media">
+                  @if (order.firstItemImage) {
+                    <img [src]="order.firstItemImage" [alt]="order.firstItemName ?? ''" loading="lazy" />
+                  } @else {
+                    <app-icon name="package" [size]="16" />
+                  }
+                </span>
+                <div class="order-cell__info">
+                  <a class="order-cell__number" [routerLink]="['/admin/orders', order.id]">
+                    {{ order.orderNumber }}
+                  </a>
+                  <p class="order-cell__item">{{ order.firstItemName ?? 'Order items' }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="cell-nowrap">
+              {{ order.createdAt | date: 'MMM d, y' }}
+              <span class="cell-time">{{ order.createdAt | date: 'h:mm a' }}</span>
+            </td>
+            <td>{{ order.itemCount }}</td>
+            <td>
+              <span class="payment-cell">
+                <span class="payment-cell__method">
+                  COD
+                </span>
+                <span class="status {{ paymentClass(order.paymentStatus) }}">
+                  {{ order.paymentStatus }}
+                </span>
+              </span>
+            </td>
+            <td class="cell-nowrap cell-total">
+              {{ order.total | currency: 'INR' : 'symbol' : '1.0-0' }}
+            </td>
+            <td>
+              <span class="status {{ statusClass(order.status) }}">{{ order.status }}</span>
+            </td>
+            <td class="cell-actions">
+              <div class="admin-cell-actions">
+                <a
+                  class="admin-icon-btn"
+                  [routerLink]="['/admin/orders', order.id]"
+                  aria-label="Open order"
+                  title="Open order"
+                >
+                  <app-icon name="chevron-right" [size]="14" />
+                </a>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalPages() > 1) {
+    <div class="admin-pagination">
+      <p class="admin-pagination__info">
+        Page {{ result()!.page }} of {{ totalPages() }} · {{ totalCount() }} orders
+      </p>
+      <div class="admin-pagination__pages">
+        <button
+          type="button"
+          [disabled]="result()!.page <= 1"
+          (click)="goToPage(result()!.page - 1)"
+          aria-label="Previous page"
+        >
+          <app-icon name="chevron-left" [size]="13" />
+        </button>
+        @for (page of pages(); track page) {
+          <button
+            type="button"
+            [class.is-active]="page === result()!.page"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+        }
+        <button
+          type="button"
+          [disabled]="result()!.page >= totalPages()"
+          (click)="goToPage(result()!.page + 1)"
+          aria-label="Next page"
+        >
+          <app-icon name="chevron-right" [size]="13" />
+        </button>
+      </div>
+    </div>
+  }
+}

@@ -1,0 +1,351 @@
+<header class="admin-page-head">
+  <div>
+    <a class="admin-back" routerLink="/admin/orders">
+      <app-icon name="arrow-left" [size]="13" />
+      Back to orders
+    </a>
+    <div class="order-title">
+      <h1>{{ order()?.orderNumber ?? 'Order' }}</h1>
+      @if (order(); as o) {
+        <span class="status {{ statusClass(o.status) }}">{{ o.status }}</span>
+        <span class="status {{ paymentClass(o.paymentStatus) }}">{{ o.paymentStatus }}</span>
+      }
+    </div>
+    <p class="admin-page-sub">
+      @if (order(); as o) {
+        Placed {{ o.createdAt | date: 'MMMM d, y' }} at {{ o.createdAt | date: 'h:mm a' }} by
+        {{ o.customerName }}.
+      } @else {
+        Review the order, update fulfilment, and keep the client informed.
+      }
+    </p>
+  </div>
+  <div class="admin-page-actions">
+    <button
+      type="button"
+      class="btn btn--sm btn--outline"
+      [disabled]="!order()"
+      (click)="print()"
+    >
+      <app-icon name="book" [size]="13" />
+      Print
+    </button>
+    <a class="btn btn--sm btn--ghost" routerLink="/admin/orders">All orders</a>
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="loading-state"><span class="spinner"></span> Loading the order</div>
+} @else if (failed() || !order()) {
+  <div class="admin-empty">
+    <p>This order could not be loaded. It may have been removed.</p>
+    <a class="btn btn--sm btn--outline mt-16" routerLink="/admin/orders">Back to orders</a>
+  </div>
+} @else {
+  @if (order(); as o) {
+    <section class="order-strip">
+      <div class="order-strip__cell">
+        <span class="order-strip__label">Order total</span>
+        <strong class="order-strip__value">
+          {{ o.total | currency: 'INR' : 'symbol' : '1.0-0' }}
+        </strong>
+      </div>
+      <div class="order-strip__cell">
+        <span class="order-strip__label">Payment</span>
+        <strong class="order-strip__value">
+          Cash on delivery
+        </strong>
+        <span class="order-strip__meta">
+          {{ o.paymentStatus }}
+          @if (o.paymentStatus === 'Pending') {
+            · collect on delivery
+          }
+        </span>
+      </div>
+      <div class="order-strip__cell">
+        <span class="order-strip__label">Items</span>
+        <strong class="order-strip__value">{{ o.items.length }}</strong>
+        <span class="order-strip__meta">
+          {{ totalUnits(o) }} {{ totalUnits(o) === 1 ? 'piece' : 'pieces' }} in total
+        </span>
+      </div>
+      <div class="order-strip__cell">
+        <span class="order-strip__label">Last updated</span>
+        <strong class="order-strip__value">
+          {{ o.updatedAt | date: 'MMM d, y' }}
+        </strong>
+        <span class="order-strip__meta">{{ o.updatedAt | date: 'h:mm a' }}</span>
+      </div>
+    </section>
+
+    <div class="order-detail">
+      <div class="order-detail__main">
+        <section class="admin-panel admin-panel--flush">
+          <div class="admin-panel__head order-panel-head">
+            <div>
+              <h2>Items</h2>
+              <p class="admin-panel__sub">
+                {{ o.items.length }} {{ o.items.length === 1 ? 'line' : 'lines' }} in this order.
+              </p>
+            </div>
+            @if (o.couponCode) {
+              <span class="coupon-chip">
+                <app-icon name="tag" [size]="11" />
+                {{ o.couponCode }}
+              </span>
+            }
+          </div>
+
+          <div class="table-wrap order-items-wrap">
+            <table class="data-table order-items-table">
+              <thead>
+                <tr>
+                  <th>Piece</th>
+                  <th>Variant</th>
+                  <th>SKU</th>
+                  <th>Qty</th>
+                  <th>Unit</th>
+                  <th>Line total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of o.items; track item.id) {
+                  <tr>
+                    <td>
+                      <div class="order-item">
+                        <span class="order-item__media">
+                          @if (item.imageUrl) {
+                            <img [src]="item.imageUrl" [alt]="item.productName" loading="lazy" />
+                          } @else {
+                            <app-icon name="image" [size]="16" />
+                          }
+                        </span>
+                        <div class="order-item__info">
+                          @if (item.productId) {
+                            <a
+                              class="order-item__name"
+                              [routerLink]="['/admin/products', item.productId, 'edit']"
+                            >
+                              {{ item.productName }}
+                            </a>
+                          } @else {
+                            <span class="order-item__name">{{ item.productName }}</span>
+                          }
+                          <p class="order-item__meta">/{{ item.productSlug }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="variant-chip">
+                        {{ item.colorName }} · {{ item.size }}
+                      </span>
+                    </td>
+                    <td class="cell-sku">{{ item.sku }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td class="cell-nowrap">
+                      {{ item.unitPrice | currency: 'INR' : 'symbol' : '1.0-0' }}
+                    </td>
+                    <td class="cell-nowrap cell-total">
+                      {{ item.lineTotal | currency: 'INR' : 'symbol' : '1.0-0' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="order-totals">
+            <div class="order-totals__row">
+              <span>Subtotal</span>
+              <span>{{ o.subtotal | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+            @if (o.discountTotal > 0) {
+              <div class="order-totals__row order-totals__row--discount">
+                <span>
+                  Discount
+                  @if (o.couponCode) {
+                    <em>({{ o.couponCode }})</em>
+                  }
+                </span>
+                <span>− {{ o.discountTotal | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+              </div>
+            }
+            <div class="order-totals__row">
+              <span>Shipping — {{ o.shippingMethod }}</span>
+              <span>
+                @if (o.shippingTotal > 0) {
+                  {{ o.shippingTotal | currency: 'INR' : 'symbol' : '1.0-0' }}
+                } @else {
+                  Complimentary
+                }
+              </span>
+            </div>
+            <div class="order-totals__row order-totals__row--grand">
+              <span>Total</span>
+              <span>{{ o.total | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-panel">
+          <div class="admin-panel__head">
+            <div>
+              <h2>Customer &amp; delivery</h2>
+              <p class="admin-panel__sub">Who ordered, where it goes, and how it was paid.</p>
+            </div>
+          </div>
+
+          <div class="detail-grid">
+            <div class="detail-block">
+              <h3>Customer</h3>
+              <p class="detail-strong">{{ o.customerName }}</p>
+              <a class="detail-link" [href]="'mailto:' + o.email">{{ o.email }}</a>
+              <a class="detail-link" [href]="'tel:' + o.shippingAddress.phone">
+                {{ o.shippingAddress.phone }}
+              </a>
+              <a
+                class="detail-link detail-link--action"
+                routerLink="/admin/orders"
+                [queryParams]="{ search: o.email }"
+              >
+                All orders from this customer
+                <app-icon name="arrow-right" [size]="11" />
+              </a>
+            </div>
+
+            <div class="detail-block">
+              <h3>Ship to</h3>
+              <address class="detail-address">
+                <strong>{{ o.shippingAddress.fullName }}</strong>
+                <span>{{ o.shippingAddress.line1 }}</span>
+                @if (o.shippingAddress.line2) {
+                  <span>{{ o.shippingAddress.line2 }}</span>
+                }
+                <span>
+                  {{ o.shippingAddress.city }}, {{ o.shippingAddress.state }}
+                  {{ o.shippingAddress.postalCode }}
+                </span>
+                <span>{{ o.shippingAddress.country }}</span>
+              </address>
+            </div>
+
+            <div class="detail-block">
+              <h3>Payment</h3>
+              <p class="detail-strong">
+                Cash on delivery
+              </p>
+              <p class="detail-muted">{{ o.paymentStatus }}</p>
+              @if (o.paymentReference) {
+                <p class="detail-mono">{{ o.paymentReference }}</p>
+              }
+              @if (o.couponCode) {
+                <p class="detail-muted">Coupon {{ o.couponCode }} applied</p>
+              }
+            </div>
+
+            <div class="detail-block">
+              <h3>Fulfilment</h3>
+              <p class="detail-strong">{{ o.shippingMethod }}</p>
+              @if (o.carrier || o.trackingNumber) {
+                @if (o.carrier) {
+                  <p class="detail-muted">{{ o.carrier }}</p>
+                }
+                @if (o.trackingNumber) {
+                  <p class="detail-mono">{{ o.trackingNumber }}</p>
+                }
+              } @else {
+                <p class="detail-muted">No carrier or tracking added yet.</p>
+              }
+            </div>
+          </div>
+
+          @if (o.notes) {
+            <div class="order-notes">
+              <h3>Customer notes</h3>
+              <p>{{ o.notes }}</p>
+            </div>
+          }
+        </section>
+      </div>
+
+      <aside class="order-detail__side">
+        <form class="admin-panel order-update" (ngSubmit)="save()" novalidate>
+          <div class="admin-panel__head">
+            <div>
+              <h2>Update</h2>
+              <p class="admin-panel__sub">Move the order through fulfilment.</p>
+            </div>
+            <span class="status {{ statusClass(o.status) }}">{{ o.status }}</span>
+          </div>
+
+          <div class="field">
+            <label for="orderStatus">Order status</label>
+            <select id="orderStatus" name="orderStatus" [(ngModel)]="status">
+              @for (option of statusOptions(); track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+            @if (isClosed()) {
+              <p class="field-hint">This order is closed. It can only stay cancelled or refunded.</p>
+            }
+          </div>
+
+          <div class="field mt-12">
+            <label for="paymentStatus">Payment status</label>
+            <select id="paymentStatus" name="paymentStatus" [(ngModel)]="paymentStatus">
+              @for (option of paymentStatuses; track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+            @if (o.paymentStatus === 'Pending') {
+              <p class="field-hint">Mark paid once cash is collected on delivery.</p>
+            }
+          </div>
+
+          <div class="field mt-12">
+            <label for="orderCarrier">Carrier</label>
+            <input
+              id="orderCarrier"
+              name="orderCarrier"
+              [(ngModel)]="carrier"
+              placeholder="e.g. Delhivery, Blue Dart"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="field mt-12">
+            <label for="orderTracking">Tracking number</label>
+            <input
+              id="orderTracking"
+              name="orderTracking"
+              [(ngModel)]="trackingNumber"
+              placeholder="Tracking reference"
+              autocomplete="off"
+            />
+            <p class="field-hint">Shown to the customer on their order page.</p>
+          </div>
+
+          <button type="submit" class="btn btn--block mt-16" [disabled]="saving()">
+            {{ saving() ? 'Saving…' : 'Save changes' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn--danger btn--block mt-8"
+            [disabled]="!canCancel() || saving()"
+            (click)="cancelOrder()"
+          >
+            Cancel order
+          </button>
+        </form>
+
+        <section class="admin-panel">
+          <p class="admin-note">
+            <strong>Good to know:</strong> cancelling returns stock to inventory. Shipping a
+            paid order does not capture payment again — use the payment status above only to
+            correct the ledger.
+          </p>
+        </section>
+      </aside>
+    </div>
+  }
+}

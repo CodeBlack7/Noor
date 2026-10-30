@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9e7db"/><stop offset="1" stop-color="#d2d0c1"/>
+    </linearGradient>
+    <linearGradient id="fabric1" x1="0.1" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#7c836c"/><stop offset="0.45" stop-color="#59604d"/><stop offset="1" stop-color="#303327"/>
+    </linearGradient>
+    <linearGradient id="veil1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7c836c" stop-opacity="0.72"/><stop offset="1" stop-color="#59604d" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="grain1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg1)"/>
+  
+  <circle cx="652" cy="196" r="118" fill="#9a8a54" opacity="0.13"/>
+  <circle cx="652" cy="196" r="88" fill="none" stroke="#9a8a54" stroke-opacity="0.22" stroke-width="1"/>
+  <path d="M160 858 L160 420 A 240 240 0 0 1 640 420 L640 858" fill="none" stroke="#c3c1af" stroke-opacity="0.75" stroke-width="1.2"/>
+  <path d="M140 858 L140 412 A 260 260 0 0 1 660 412 L660 858" fill="none" stroke="#9a8a54" stroke-opacity="0.15" stroke-width="1"/>
+  
+      <g opacity="0.96">
+        <path d="M210 840 C 182 650 238 466 400 424 C 562 466 618 650 590 840 C 520 880 280 880 210 840 Z" fill="url(#fabric1)"/>
+        <path d="M400 424 C 336 446 302 500 304 552 C 350 582 450 582 496 552 C 498 500 464 446 400 424 Z" fill="#7c836c" opacity="0.7"/>
+        <path d="M400 424 C 372 320 282 296 238 344 C 286 358 338 398 354 448" fill="none" stroke="#7c836c" stroke-opacity="0.8" stroke-width="28" stroke-linecap="round"/>
+        <path d="M258 698 C 336 726 464 726 542 698" fill="none" stroke="#c3c1af" stroke-opacity="0.28" stroke-width="2"/>
+        <path d="M286 780 C 344 798 456 798 514 780" fill="none" stroke="#c3c1af" stroke-opacity="0.2" stroke-width="2"/>
+      </g>
+  <rect width="800" height="1000" filter="url(#grain1)" opacity="0.045"/>
+  
+  <g fill="#303327">
+    <text x="58" y="78" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="7">NOOR</text>
+    <text x="58" y="101" font-family="Arial, sans-serif" font-size="8" letter-spacing="3" opacity="0.58">MODEST ATELIER</text>
+    <text x="58" y="918" font-family="Arial, sans-serif" font-size="9" letter-spacing="4" opacity="0.6">prayer wear</text>
+    <text x="58" y="955" font-family="Georgia, 'Times New Roman', serif" font-size="29">One-Piece Prayer Dress</text>
+    <text x="742" y="955" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="15" opacity="0.7">N° 01</text>
+    <line x1="58" y1="882" x2="742" y2="882" stroke="#303327" stroke-opacity="0.18" stroke-width="1"/>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" width="1000" height="1200">
+  
+  <defs>
+    <linearGradient id="bg10" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eee4d4"/><stop offset="1" stop-color="#d8c6ad"/>
+    </linearGradient>
+    <linearGradient id="fabric10" x1="0.1" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#957a62"/><stop offset="0.45" stop-color="#6f5847"/><stop offset="1" stop-color="#3d2f25"/>
+    </linearGradient>
+    <linearGradient id="veil10" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#957a62" stop-opacity="0.72"/><stop offset="1" stop-color="#6f5847" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="grain10"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="1000" height="1200" fill="url(#bg10)"/>
+  <g opacity="0.97">
+    <path d="M0 980 C 180 760 290 430 500 280 C 710 430 820 760 1000 980 L 1000 1200 L 0 1200 Z" fill="url(#fabric10)"/>
+    <path d="M0 1060 C 260 860 330 560 500 430 C 670 560 740 860 1000 1060" fill="none" stroke="#cbb69d" stroke-opacity="0.3" stroke-width="2"/>
+    <path d="M0 1140 C 300 960 390 700 500 620 C 610 700 700 960 1000 1140" fill="none" stroke="#cbb69d" stroke-opacity="0.16" stroke-width="2"/>
+    <circle cx="760" cy="300" r="130" fill="none" stroke="#a56f48" stroke-opacity="0.3"/>
+    <circle cx="760" cy="300" r="96" fill="#a56f48" opacity="0.12"/>
+  </g>
+  <rect width="1000" height="1200" filter="url(#grain10)" opacity="0.05"/>
+  <g fill="#eee4d4">
+    <text x="70" y="92" font-family="Georgia, 'Times New Roman', serif" font-size="19" letter-spacing="8">NOOR</text>
+    <text x="70" y="1092" font-family="Arial, sans-serif" font-size="9" letter-spacing="4" opacity="0.65">MADE SLOWLY · WORN OFTEN</text>
+    <text x="70" y="1136" font-family="Georgia, 'Times New Roman', serif" font-size="38">The feel of quiet luxury.</text>
+  </g>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1400" width="1200" height="1400">
+  
+  <defs>
+    <linearGradient id="bg9" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2eadc"/><stop offset="1" stop-color="#ded1bd"/>
+    </linearGradient>
+    <linearGradient id="fabric9" x1="0.1" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#51483d"/><stop offset="0.45" stop-color="#2e2a24"/><stop offset="1" stop-color="#242019"/>
+    </linearGradient>
+    <linearGradient id="veil9" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#51483d" stop-opacity="0.72"/><stop offset="1" stop-color="#2e2a24" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="grain9"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="1200" height="1400" fill="url(#bg9)"/>
+  <circle cx="970" cy="250" r="200" fill="#a8834b" opacity="0.12"/>
+  <circle cx="970" cy="250" r="154" fill="none" stroke="#a8834b" stroke-opacity="0.25" stroke-width="1"/>
+  <path d="M230 1310 L230 510 A 370 370 0 0 1 970 510 L970 1310" fill="none" stroke="#cbbda6" stroke-opacity="0.85" stroke-width="1.5"/>
+  <path d="M198 1310 L198 500 A 402 402 0 0 1 1002 500 L1002 1310" fill="none" stroke="#a8834b" stroke-opacity="0.22" stroke-width="1"/>
+  <g transform="translate(200 110) scale(1.0)">
+    
+    <g opacity="0.99">
+      <path d="M400 240 C 330 248 294 310 296 378 L 304 456 C 280 522 262 620 258 716 L 244 836 L 556 836 L 542 716 C 538 620 520 522 496 456 L 504 378 C 506 310 470 248 400 240 Z" fill="url(#fabric9)"/>
+      <path d="M400 240 C 330 248 294 310 296 378 L 304 456 L 496 456 L 504 378 C 506 310 470 248 400 240 Z" fill="url(#fabric9)"/>
+       <path d="M400 272 C 352 278 328 322 330 370 C 362 388 438 388 470 370 C 472 322 448 278 400 272 Z" fill="#242019" opacity="0.28"/>
+      <path d="M300 500 C 260 592 248 704 246 810" fill="none" stroke="#cbbda6" stroke-opacity="0.18" stroke-width="2"/>
+      <path d="M500 500 C 540 592 552 704 554 810" fill="none" stroke="#cbbda6" stroke-opacity="0.14" stroke-width="2"/>
+      <path d="M334 636 C 368 654 432 654 466 636" fill="none" stroke="#cbbda6" stroke-opacity="0.16" stroke-width="2"/>
+      <path d="M318 744 C 368 764 432 764 482 744" fill="none" stroke="#cbbda6" stroke-opacity="0.12" stroke-width="2"/>
+    </g>
+  </g>
+  <path d="M0 1120 C 300 1060 900 1060 1200 1120 L1200 1400 L0 1400 Z" fill="#f2eadc" opacity="0.28"/>
+  <rect width="1200" height="1400" filter="url(#grain9)" opacity="0.05"/>
+  <g fill="#242019">
+    <text x="72" y="96" font-family="Georgia, 'Times New Roman', serif" font-size="21" letter-spacing="9">NOOR</text>
+    <text x="72" y="124" font-family="Arial, sans-serif" font-size="9" letter-spacing="4" opacity="0.6">MODEST ATELIER · EST. 2026</text>
+    <text x="1128" y="1304" text-anchor="end" font-family="Arial, sans-serif" font-size="10" letter-spacing="4" opacity="0.55">THE AUTUMN EDIT</text>
+  </g>
+</svg>

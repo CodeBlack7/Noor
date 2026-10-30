@@ -1,0 +1,315 @@
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">The autumn edit · 2026</p>
+      <h1>Quietly <em>considered</em> modest wear.</h1>
+      <p class="lead hero__lead">
+        Burqas, abayas and hijabs cut from breathable, beautiful fabrics. Made slowly,
+        finished by hand, and designed to be worn for years — not seasons.
+      </p>
+      <div class="hero__actions">
+        <a class="btn" routerLink="/shop">
+          Shop the collection
+          <app-icon name="arrow-right" [size]="15" />
+        </a>
+        <a class="btn btn--outline" routerLink="/our-story">Our story</a>
+      </div>
+
+      <ul class="hero__notes">
+        <li>
+          <span>01</span>
+          <p>Breathable, considered fabrics</p>
+        </li>
+        <li>
+          <span>02</span>
+          <p>Cut for graceful movement</p>
+        </li>
+        <li>
+          <span>03</span>
+          <p>Complimentary shipping over ₹1,999</p>
+        </li>
+      </ul>
+    </div>
+
+    <div class="hero__visual">
+      <div class="hero__frame">
+        <img src="assets/hero.svg" alt="Noor autumn editorial in warm ivory and espresso" />
+      </div>
+      <div class="hero__seal" aria-hidden="true">
+        <app-icon name="sparkle" [size]="17" />
+        <span>Made slowly<br />worn often</span>
+      </div>
+      <div class="hero__caption">
+        <span>N° 01 — The Everyday</span>
+        <p>Generous cuts. Soft drape. A quiet kind of confidence.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <ul class="hero__ticker">
+      <li><app-icon name="leaf" [size]="15" /> Natural, breathable fabrics</li>
+      <li><app-icon name="scissors" [size]="15" /> Hand-finished details</li>
+      <li><app-icon name="truck" [size]="15" /> Complimentary shipping over ₹1,999</li>
+      <li><app-icon name="refresh" [size]="15" /> Easy 7-day returns</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section collections">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__copy">
+        <p class="eyebrow">The collections</p>
+        <h2>Find your everyday, and your occasion.</h2>
+      </div>
+      <a class="section-head__link" routerLink="/shop">View all pieces</a>
+    </div>
+
+    @if (loading()) {
+      <div class="collections__grid">
+        @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+          <div class="collection skeleton"></div>
+        }
+      </div>
+    } @else {
+      <div class="collections__grid">
+        @for (category of collections(); track category.id; let index = $index) {
+          <a
+            class="collection"
+            [class.collection--wide]="index === 0 || index === 3"
+            routerLink="/shop"
+            [queryParams]="{ category: category.slug }"
+          >
+            @if (category.imageUrl) {
+              <img [src]="category.imageUrl" [alt]="category.name" loading="lazy" />
+            }
+            <span class="collection__overlay"></span>
+            <span class="collection__content">
+              <span class="collection__count">{{ category.productCount }} pieces</span>
+              <span class="collection__name">{{ category.name }}</span>
+              <span class="collection__link">
+                Explore
+                <app-icon name="arrow-right" [size]="13" />
+              </span>
+            </span>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<section class="section section--tight featured">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__copy">
+        <p class="eyebrow">Chosen for you</p>
+        <h2>The atelier selection.</h2>
+      </div>
+      <a class="section-head__link" routerLink="/shop" [queryParams]="{ featured: true }">
+        Shop all favourites
+      </a>
+    </div>
+
+    <div class="product-grid">
+      @if (loading()) {
+        @for (item of [1, 2, 3, 4]; track item) {
+          <div class="product-skeleton">
+            <div class="product-skeleton__media skeleton"></div>
+            <div class="product-skeleton__line skeleton"></div>
+            <div class="product-skeleton__line product-skeleton__line--short skeleton"></div>
+          </div>
+        }
+      } @else {
+        @for (product of featured(); track product.id) {
+          <app-product-card [product]="product" />
+        }
+      }
+    </div>
+  </div>
+</section>
+
+<section class="section story section--tint">
+  <div class="container story__grid">
+    <div class="story__visual">
+      <img src="assets/story.svg" alt="Fabric study in warm sand and espresso" loading="lazy" />
+      <span class="story__tag">Atelier notes · No. 04</span>
+    </div>
+
+    <div class="story__copy">
+      <p class="eyebrow">Our philosophy</p>
+      <h2>Dress with intention.<br />Live with ease.</h2>
+      <p class="lead">
+        Noor began with a simple frustration: modest wear that felt either too plain or
+        too precious. We wanted pieces that could be worn to school drop-off, to work,
+        to a wedding — and feel right in every room.
+      </p>
+      <p>
+        Every style starts with the fabric. We choose crepes that breathe, linens that
+        soften with wear, and jerseys that hold their shape. Then we cut generously,
+        finish by hand, and keep the details quiet.
+      </p>
+
+      <ul class="story__values">
+        <li>
+          <app-icon name="leaf" [size]="18" />
+          <div>
+            <strong>Fabric first</strong>
+            <span>Natural fibres, tested for comfort in real life.</span>
+          </div>
+        </li>
+        <li>
+          <app-icon name="shield" [size]="18" />
+          <div>
+            <strong>Made to last</strong>
+            <span>Reinforced seams and finishes that survive the wash.</span>
+          </div>
+        </li>
+        <li>
+          <app-icon name="sparkle" [size]="18" />
+          <div>
+            <strong>Quietly beautiful</strong>
+            <span>Considered details, never decoration for its own sake.</span>
+          </div>
+        </li>
+      </ul>
+
+      <a class="link-underline story__link" routerLink="/our-story">Read our story</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__copy">
+        <p class="eyebrow">Most loved</p>
+        <h2>Worn on repeat.</h2>
+      </div>
+      <a class="section-head__link" routerLink="/shop" [queryParams]="{ sort: 'rating' }">
+        Shop bestsellers
+      </a>
+    </div>
+
+    <div class="product-grid">
+      @if (loading()) {
+        @for (item of [1, 2, 3, 4]; track item) {
+          <div class="product-skeleton">
+            <div class="product-skeleton__media skeleton"></div>
+            <div class="product-skeleton__line skeleton"></div>
+            <div class="product-skeleton__line product-skeleton__line--short skeleton"></div>
+          </div>
+        }
+      } @else {
+        @for (product of bestsellers(); track product.id) {
+          <app-product-card [product]="product" />
+        }
+      }
+    </div>
+  </div>
+</section>
+
+<section class="craft">
+  <div class="craft__media">
+    <img src="assets/craft.svg" alt="A close study of Noor fabric and finish" loading="lazy" />
+  </div>
+  <div class="craft__copy">
+    <p class="eyebrow">Considered in every detail</p>
+    <h2>“Luxury is a fabric that feels like a deep breath.”</h2>
+    <p>
+      Our Nida crepe is woven to drape, not cling. Our linens are washed until they
+      feel like an old favourite. Every hem is checked by hand.
+    </p>
+    <a class="btn btn--light" routerLink="/our-story">
+      Inside the atelier
+      <app-icon name="arrow-right" [size]="14" />
+    </a>
+  </div>
+</section>
+
+<section class="section testimonials">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__copy">
+        <p class="eyebrow">In their words</p>
+        <h2>Loved, worn, and lived in.</h2>
+      </div>
+      <span class="testimonials__rating">
+        <span class="serif">4.9</span>
+        <span>average from 120+ reviews</span>
+      </span>
+    </div>
+
+    <div class="testimonials__grid">
+      <figure class="testimonial">
+        <div class="testimonial__stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote>
+          “The fabric is even lovelier in person. It drapes beautifully and the finish
+          is so considered. I have worn it three times in the first week.”
+        </blockquote>
+        <figcaption>
+          <strong>Sara K.</strong>
+          <span>Layla Everyday Burqa · Hyderabad</span>
+        </figcaption>
+      </figure>
+
+      <figure class="testimonial">
+        <div class="testimonial__stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote>
+          “Quietly luxurious. It feels special without ever feeling fussy — exactly
+          what I wanted for Eid.”
+        </blockquote>
+        <figcaption>
+          <strong>Amina Y.</strong>
+          <span>Maryam Occasion Burqa · Mumbai</span>
+        </figcaption>
+      </figure>
+
+      <figure class="testimonial">
+        <div class="testimonial__stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote>
+          “Packed beautifully and came out looking fresh. The coverage and weight are
+          just right for travel.”
+        </blockquote>
+        <figcaption>
+          <strong>Leila H.</strong>
+          <span>Hana Travel Burqa · Kochi</span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="services">
+  <div class="container services__grid">
+    <div class="service">
+      <app-icon name="truck" [size]="22" />
+      <div>
+        <strong>Complimentary shipping</strong>
+        <p>On all orders over ₹1,999, delivered in 3–5 working days.</p>
+      </div>
+    </div>
+    <div class="service">
+      <app-icon name="refresh" [size]="22" />
+      <div>
+        <strong>Easy 7-day returns</strong>
+        <p>Unworn pieces, returned with care and no fuss.</p>
+      </div>
+    </div>
+    <div class="service">
+      <app-icon name="shield" [size]="22" />
+      <div>
+        <strong>Cash on delivery</strong>
+        <p>Pay when your order arrives. No online payment details are collected.</p>
+      </div>
+    </div>
+    <div class="service">
+      <app-icon name="mail" [size]="22" />
+      <div>
+        <strong>Here to help</strong>
+        <p>Real people at care@noor.store, Mon–Fri.</p>
+      </div>
+    </div>
+  </div>
+</section>

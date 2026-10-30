@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2eadc"/><stop offset="1" stop-color="#ded1bd"/>
+    </linearGradient>
+    <linearGradient id="fabric2" x1="0.1" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#51483d"/><stop offset="0.45" stop-color="#2e2a24"/><stop offset="1" stop-color="#242019"/>
+    </linearGradient>
+    <linearGradient id="veil2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#51483d" stop-opacity="0.72"/><stop offset="1" stop-color="#2e2a24" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="grain2"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg2)"/>
+  <rect x="54" y="54" width="692" height="892" fill="none" stroke="#242019" stroke-opacity="0.18"/>
+  <g opacity="0.94">
+    <path d="M94 730 C 236 600 322 392 400 292 C 478 392 564 600 706 730 L 706 910 L 94 910 Z" fill="url(#fabric2)"/>
+    <path d="M142 760 C 270 646 338 492 400 412 C 462 492 530 646 658 760" fill="none" stroke="#cbbda6" stroke-opacity="0.3" stroke-width="2"/>
+    <path d="M180 790 C 296 690 352 558 400 492 C 448 558 504 690 620 790" fill="none" stroke="#cbbda6" stroke-opacity="0.18" stroke-width="2"/>
+    <path d="M94 838 C 260 786 540 786 706 838" fill="none" stroke="#a8834b" stroke-opacity="0.4" stroke-width="1.5"/>
+    <circle cx="650" cy="196" r="74" fill="none" stroke="#a8834b" stroke-opacity="0.35"/>
+    <circle cx="650" cy="196" r="56" fill="#a8834b" opacity="0.13"/>
+  </g>
+  <rect width="800" height="1000" filter="url(#grain2)" opacity="0.05"/>
+  <g fill="#f2eadc">
+    <text x="88" y="96" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="7">NOOR</text>
+    <text x="88" y="848" font-family="Arial, sans-serif" font-size="8" letter-spacing="4" opacity="0.66">FABRIC STUDY · NIQABS</text>
+    <text x="88" y="882" font-family="Georgia, 'Times New Roman', serif" font-size="24">A closer look</text>
+  </g>
+</svg>

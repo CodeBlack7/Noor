@@ -1,0 +1,266 @@
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.drawer__scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(20, 17, 14, 0.42);
+  backdrop-filter: blur(2px);
+  animation: fade-in 0.2s ease both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.drawer__panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(92vw, 460px);
+  height: 100%;
+  background: var(--paper);
+  border-left: 1px solid var(--line);
+  box-shadow: var(--shadow-lg);
+  animation: draw-in 0.32s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes draw-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.drawer__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.drawer__head h2 {
+  margin-top: 6px;
+  font-size: 1.7rem;
+}
+
+.drawer__head h2 span {
+  font-family: var(--sans);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  vertical-align: middle;
+}
+
+.drawer__shipping {
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(239, 228, 209, 0.4);
+}
+
+.drawer__shipping p {
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+
+.drawer__shipping strong {
+  font-weight: 700;
+}
+
+.drawer__bar {
+  margin-top: 9px;
+  height: 2px;
+  background: rgba(28, 25, 21, 0.12);
+}
+
+.drawer__bar span {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transition: width 0.5s ease;
+}
+
+.drawer__items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 22px;
+}
+
+.drawer__item {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.drawer__image {
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.drawer__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.drawer__info {
+  min-width: 0;
+}
+
+.drawer__name {
+  display: block;
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  line-height: 1.25;
+  transition: color 0.2s ease;
+}
+
+.drawer__name:hover {
+  color: var(--gold);
+}
+
+.drawer__variant {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.drawer__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.drawer__row app-quantity-stepper {
+  transform: scale(0.86);
+  transform-origin: left center;
+}
+
+.drawer__price {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.drawer__remove {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  transition: color 0.2s ease;
+}
+
+.drawer__remove:hover {
+  color: var(--danger);
+}
+
+.drawer__foot {
+  padding: 18px 22px 22px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.drawer__line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  padding-block: 3px;
+}
+
+.drawer__line strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.drawer__line--discount {
+  color: var(--success);
+}
+
+.drawer__note {
+  margin: 6px 0 14px;
+  font-size: 9.5px;
+  color: var(--muted);
+}
+
+.drawer__view {
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+  width: fit-content;
+  margin-inline: auto;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.drawer__view:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.drawer__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+}
+
+.drawer__empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 74px;
+  height: 74px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.drawer__empty h3 {
+  font-size: 1.6rem;
+}
+
+.drawer__empty p {
+  max-width: 280px;
+  margin: 12px 0 22px;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--muted);
+}

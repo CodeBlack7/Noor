@@ -1,0 +1,215 @@
+<div class="container">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span>Your bag</span>
+  </nav>
+</div>
+
+<div class="container cart-head">
+  <div>
+    <p class="eyebrow">Your selection</p>
+    <h1>Shopping bag</h1>
+  </div>
+  <p class="cart-head__count">
+    {{ cartService.itemCount() }}
+    {{ cartService.itemCount() === 1 ? 'piece' : 'pieces' }}
+  </p>
+</div>
+
+@if (!cart() || cart()!.itemCount === 0) {
+  <div class="container section cart-empty">
+    <div class="empty-state">
+      <span class="cart-empty__icon"><app-icon name="bag" [size]="30" /></span>
+      <h3>Your bag is waiting.</h3>
+      <p>
+        Nothing selected yet. Explore considered pieces in breathable fabrics — made
+        slowly, worn often.
+      </p>
+      <a class="btn" routerLink="/shop">
+        Discover the collection
+        <app-icon name="arrow-right" [size]="15" />
+      </a>
+    </div>
+  </div>
+} @else {
+  @if (cart(); as cart) {
+    <div class="container cart">
+      <section class="cart__items" aria-label="Bag contents">
+        <div class="cart__labels" aria-hidden="true">
+          <span>Piece</span>
+          <span>Quantity</span>
+          <span>Total</span>
+        </div>
+
+        @for (item of cart.items; track item.id) {
+          <article class="cart-item">
+            <a class="cart-item__media" [routerLink]="['/product', item.productSlug]">
+              @if (item.imageUrl) {
+                <img [src]="item.imageUrl" [alt]="item.productName" />
+              } @else {
+                <div class="cart-item__placeholder"></div>
+              }
+            </a>
+
+            <div class="cart-item__info">
+              <a class="cart-item__name" [routerLink]="['/product', item.productSlug]">
+                {{ item.productName }}
+              </a>
+              <p class="cart-item__variant">
+                {{ item.colorName }} · Size {{ item.size }}
+              </p>
+              <p class="cart-item__sku">{{ item.sku }}</p>
+              <p class="cart-item__unit">
+                {{ item.unitPrice | currency: 'INR' : 'symbol' : '1.0-0' }} each
+              </p>
+
+              <div class="cart-item__mobile">
+                <app-quantity-stepper
+                  [value]="item.quantity"
+                  [max]="item.stockQuantity"
+                  (valueChange)="cartService.update(item.id, $event)"
+                />
+                <span class="cart-item__line">
+                  {{ item.lineTotal | currency: 'INR' : 'symbol' : '1.0-0' }}
+                </span>
+              </div>
+
+              <div class="cart-item__actions">
+                <button type="button" (click)="cartService.remove(item.id)">
+                  <app-icon name="trash" [size]="14" />
+                  Remove
+                </button>
+              </div>
+            </div>
+
+            <div class="cart-item__qty">
+              <app-quantity-stepper
+                [value]="item.quantity"
+                [max]="item.stockQuantity"
+                (valueChange)="cartService.update(item.id, $event)"
+              />
+              @if (item.stockQuantity <= 5) {
+                <p class="cart-item__stock">Only {{ item.stockQuantity }} left</p>
+              }
+            </div>
+
+            <span class="cart-item__total">
+              {{ item.lineTotal | currency: 'INR' : 'symbol' : '1.0-0' }}
+            </span>
+          </article>
+        }
+
+        <div class="cart__continue">
+          <a routerLink="/shop" class="link-underline">
+            <app-icon name="arrow-left" [size]="13" />
+            Continue shopping
+          </a>
+          <p>Complimentary shipping on orders over ₹1,999.</p>
+        </div>
+      </section>
+
+      <aside class="summary" aria-label="Order summary">
+        <h2 class="summary__title">Order summary</h2>
+
+        <div class="summary__rows">
+          <div class="summary__row">
+            <span>Subtotal</span>
+            <span>{{ cart.subtotal | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+          </div>
+
+          @if (cart.discountTotal > 0) {
+            <div class="summary__row summary__row--discount">
+              <span>Discount{{ cart.couponCode ? ' · ' + cart.couponCode : '' }}</span>
+              <span>−{{ cart.discountTotal | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          }
+
+          <div class="summary__row">
+            <span>Shipping</span>
+            <span>
+              @if (shipping() > 0) {
+                {{ shipping() | currency: 'INR' : 'symbol' : '1.0-0' }}
+              } @else {
+                Complimentary
+              }
+            </span>
+          </div>
+        </div>
+
+        <div class="summary__total">
+          <span>Total</span>
+          <strong>{{ cart.total | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+        </div>
+        <p class="summary__tax">INR · prices include taxes.</p>
+        <p class="summary__tax">Cash on delivery only · pay when your order arrives.</p>
+
+        @if (cart.freeShippingRemaining > 0) {
+          <p class="summary__shipping-note">
+            Add
+            <strong>{{ cart.freeShippingRemaining | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+            more for complimentary shipping.
+          </p>
+        }
+
+        <button type="button" class="btn btn--block summary__checkout" (click)="checkout()">
+          Proceed to checkout
+          <app-icon name="arrow-right" [size]="15" />
+        </button>
+
+        <div class="coupon">
+          <p class="coupon__title">Have a code?</p>
+          @if (cart.couponCode) {
+            <div class="coupon__applied">
+              <span>
+                <app-icon name="tag" [size]="14" />
+                {{ cart.couponCode }} applied
+              </span>
+              <button type="button" (click)="removeCoupon()">Remove</button>
+            </div>
+          } @else {
+            <form class="coupon__form" (ngSubmit)="applyCoupon()">
+              <input
+                type="text"
+                name="coupon"
+                [(ngModel)]="couponCode"
+                placeholder="Enter code"
+                aria-label="Coupon code"
+                autocomplete="off"
+              />
+              <button type="submit" class="btn btn--sm btn--outline" [disabled]="applyingCoupon()">
+                {{ applyingCoupon() ? '…' : 'Apply' }}
+              </button>
+            </form>
+            <p class="coupon__hint">Try WELCOME10 for 10% off your first order.</p>
+          }
+        </div>
+
+        <ul class="summary__assurances">
+          <li><app-icon name="truck" [size]="15" /> Delivered in 3–5 working days</li>
+          <li><app-icon name="refresh" [size]="15" /> Easy 7-day returns</li>
+          <li><app-icon name="lock" [size]="15" /> Cash on delivery</li>
+        </ul>
+      </aside>
+    </div>
+  }
+}
+
+@if (recommended().length > 0) {
+  <section class="section section--tight cart-recommended">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__copy">
+          <p class="eyebrow">Complete the wardrobe</p>
+          <h2>You may also love.</h2>
+        </div>
+        <a class="section-head__link" routerLink="/shop">View all pieces</a>
+      </div>
+      <div class="product-grid">
+        @for (product of recommended(); track product.id) {
+          <app-product-card [product]="product" />
+        }
+      </div>
+    </div>
+  </section>
+}

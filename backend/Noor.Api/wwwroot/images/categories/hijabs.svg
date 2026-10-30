@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" width="900" height="1100">
+  
+  <defs>
+    <linearGradient id="bg7" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1e8e0"/><stop offset="1" stop-color="#e2d2c5"/>
+    </linearGradient>
+    <linearGradient id="fabric7" x1="0.1" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#9c7668"/><stop offset="0.45" stop-color="#7c574b"/><stop offset="1" stop-color="#493229"/>
+    </linearGradient>
+    <linearGradient id="veil7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9c7668" stop-opacity="0.72"/><stop offset="1" stop-color="#7c574b" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="grain7"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="900" height="1100" fill="url(#bg7)"/>
+  <circle cx="720" cy="220" r="140" fill="#ab8452" opacity="0.12"/>
+  <path d="M170 950 L170 460 A 280 280 0 0 1 730 460 L730 950" fill="none" stroke="#d6c4b4" stroke-opacity="0.8" stroke-width="1.2"/>
+  <g transform="translate(50 0)" opacity="0.97">
+    <path d="M400 250 C 286 250 220 338 220 468 C 220 592 174 668 156 810 C 236 882 564 882 644 810 C 626 668 580 592 580 468 C 580 338 514 250 400 250 Z" fill="url(#veil7)"/>
+    <path d="M400 306 C 328 306 294 364 294 446 C 294 523 336 578 400 602 C 464 578 506 523 506 446 C 506 364 472 306 400 306 Z" fill="#d8b8a8"/>
+    <path d="M400 306 C 328 306 294 364 294 446 C 294 523 336 578 400 602 C 464 578 506 523 506 446 C 506 364 472 306 400 306 Z" fill="url(#bg7)" opacity="0.34"/>
+    <path d="M284 454 C 288 350 336 286 400 274 C 464 286 512 350 516 454" fill="none" stroke="#d6c4b4" stroke-opacity="0.7" stroke-width="8"/>
+    <path d="M294 482 C 304 568 334 622 400 650 C 466 622 496 568 506 482" fill="none" stroke="#d6c4b4" stroke-opacity="0.56" stroke-width="3"/>
+    <path d="M286 510 C 250 616 230 708 216 796" fill="none" stroke="#d6c4b4" stroke-opacity="0.38" stroke-width="2"/>
+    <path d="M514 510 C 550 616 570 708 584 796" fill="none" stroke="#d6c4b4" stroke-opacity="0.38" stroke-width="2"/>
+    <path d="M326 608 C 348 690 372 744 400 780 C 428 744 452 690 474 608" fill="#493229" opacity="0.18"/>
+    <path d="M210 840 C 292 882 508 882 590 840" fill="none" stroke="#ab8452" stroke-opacity="0.65" stroke-width="2"/>
+  </g>
+  <rect width="900" height="1100" filter="url(#grain7)" opacity="0.05"/>
+  <g fill="#493229">
+    <text x="60" y="80" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="7">NOOR</text>
+    <line x1="60" y1="960" x2="840" y2="960" stroke="#493229" stroke-opacity="0.2"/>
+    <text x="60" y="1000" font-family="Arial, sans-serif" font-size="9" letter-spacing="4" opacity="0.6">TEXTURE, COLOUR, DRAPE</text>
+    <text x="60" y="1048" font-family="Georgia, 'Times New Roman', serif" font-size="40">Hijabs &amp; Scarves</text>
+    <text x="840" y="1048" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="15" opacity="0.6">COLLECTION</text>
+  </g>
+</svg>

@@ -1,0 +1,56 @@
+# Build output
+**/bin/
+**/obj/
+**/dist/
+**/out-tsc/
+
+# .NET / Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# Angular
+frontend/noor-web/node_modules/
+frontend/noor-web/.angular/
+frontend/noor-web/coverage/
+frontend/noor-web/screenshots/
+frontend/noor-web/.sass-cache/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+backend/Noor.Api/wwwroot/uploads/*
+!backend/Noor.Api/wwwroot/uploads/.gitkeep
+*.log
+logs/
+
+# Local databases and secrets
+*.mdf
+*.ldf
+*.db
+appsettings.*.local.json
+.env
+.env.*
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+*.swp
+*~
+
+# Temporary scratch
+tmp/

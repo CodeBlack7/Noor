@@ -1,0 +1,85 @@
+.order-table {
+  min-width: 860px;
+}
+
+.order-table td {
+  vertical-align: middle;
+}
+
+.order-cell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 210px;
+}
+
+.order-cell__media {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 50px;
+  flex: none;
+  overflow: hidden;
+  background: var(--paper-deep);
+  color: var(--subtle);
+}
+
+.order-cell__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-cell__number {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  transition: color 0.18s ease;
+}
+
+.order-cell__number:hover {
+  color: var(--gold);
+}
+
+.order-cell__item {
+  margin-top: 2px;
+  font-size: 9.5px;
+  color: var(--subtle);
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cell-nowrap {
+  white-space: nowrap;
+}
+
+.cell-time {
+  display: block;
+  margin-top: 1px;
+  font-size: 8.5px;
+  color: var(--subtle);
+}
+
+.cell-total {
+  font-weight: 600;
+}
+
+.payment-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.payment-cell__method {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--subtle);
+}

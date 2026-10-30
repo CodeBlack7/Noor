@@ -1,0 +1,129 @@
+.admin-empty__actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.admin-table {
+  min-width: 980px;
+}
+
+.admin-table th {
+  white-space: nowrap;
+}
+
+.admin-table td {
+  vertical-align: middle;
+}
+
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 230px;
+}
+
+.product-cell__media {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 56px;
+  flex: none;
+  overflow: hidden;
+  background: var(--paper-deep);
+  color: var(--subtle);
+}
+
+.product-cell__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-cell__info {
+  min-width: 0;
+}
+
+.product-cell__name {
+  display: block;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  transition: color 0.18s ease;
+}
+
+.product-cell__name:hover {
+  color: var(--gold);
+}
+
+.product-cell__meta {
+  margin-top: 2px;
+  font-size: 8.5px;
+  letter-spacing: 0.04em;
+  color: var(--subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.cell-nowrap {
+  white-space: nowrap;
+}
+
+.cell-muted {
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.cell-compare {
+  display: block;
+  font-size: 9.5px;
+  color: var(--subtle);
+}
+
+.stock-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.stock-pill--ok {
+  border-color: #cfe0d4;
+  background: #e8f0ea;
+  color: var(--success);
+}
+
+.stock-pill--low {
+  border-color: #e8d7b6;
+  background: #f5ecd8;
+  color: #896827;
+}
+
+.stock-pill--out {
+  border-color: #ecd2cd;
+  background: #f6e9e6;
+  color: var(--danger);
+}
+
+.status-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.status-stack .badge {
+  font-size: 7.5px;
+  padding: 2px 6px;
+}

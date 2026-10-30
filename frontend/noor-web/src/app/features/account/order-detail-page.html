@@ -1,0 +1,231 @@
+<div class="container">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/account">My account</a>
+    <span class="sep">/</span>
+    <a routerLink="/account/orders">Orders</a>
+    @if (order(); as order) {
+      <span class="sep">/</span>
+      <span>{{ order.orderNumber }}</span>
+    }
+  </nav>
+</div>
+
+@if (loading()) {
+  <div class="container section">
+    <div class="loading-state"><span class="spinner"></span> Loading order</div>
+  </div>
+} @else if (failed() || !order()) {
+  <div class="container section">
+    <div class="empty-state">
+      <h3>We could not find that order.</h3>
+      <p>It may belong to another account, or the link may have changed.</p>
+      <a class="btn" routerLink="/account/orders">Back to your orders</a>
+    </div>
+  </div>
+} @else {
+  @if (order(); as order) {
+    @if (justPlaced) {
+      <div class="container">
+        <div class="placed-banner">
+          <span class="placed-banner__icon"><app-icon name="check" [size]="18" /></span>
+          <div>
+            <p class="eyebrow eyebrow--plain">Thank you</p>
+            <h2>Your order is confirmed.</h2>
+            <p>
+              A confirmation is on its way to {{ order.email }}. We will write again when
+              your pieces leave the atelier.
+            </p>
+          </div>
+          <a class="btn btn--light" routerLink="/shop">Continue shopping</a>
+        </div>
+      </div>
+    }
+
+    <div class="container order-head">
+      <div>
+        <p class="eyebrow">Order {{ order.orderNumber }}</p>
+        <h1>{{ justPlaced ? 'Order confirmed' : 'Order details' }}</h1>
+        <p class="order-head__date">Placed {{ order.createdAt | date: 'longDate' }}</p>
+      </div>
+      <div class="order-head__actions">
+        <span class="status {{ statusClass(order.status) }}">{{ order.status }}</span>
+        <span class="status status--{{ order.paymentStatus === 'Paid' ? 'paid' : 'unpaid' }}">
+          {{ order.paymentStatus }}
+        </span>
+        @if (canCancel()) {
+          <button type="button" class="btn btn--sm btn--danger" [disabled]="canceling()" (click)="cancel()">
+            {{ canceling() ? 'Cancelling…' : 'Cancel order' }}
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (order.status === 'Cancelled' || order.status === 'Refunded') {
+      <div class="container">
+        <div class="order-note order-note--cancelled">
+          <app-icon name="x-circle" [size]="17" />
+          <p>
+            This order was {{ order.status.toLowerCase() }}. If this was unexpected, our
+            client care team can help at care@noor.store.
+          </p>
+        </div>
+      </div>
+    } @else {
+      <div class="container">
+        <ol class="timeline">
+          @for (step of flow; track step; let index = $index) {
+            <li
+              [class.is-done]="index < currentStep()"
+              [class.is-current]="index === currentStep()"
+            >
+              <span class="timeline__dot">
+                @if (index < currentStep()) {
+                  <app-icon name="check" [size]="12" />
+                }
+              </span>
+              <span class="timeline__label">{{ step }}</span>
+            </li>
+          }
+        </ol>
+      </div>
+    }
+
+    <div class="container order">
+      <section class="order__main">
+        <div class="panel">
+          <h2 class="panel__title">Your pieces</h2>
+          <div class="order-items">
+            @for (item of order.items; track item.id) {
+              <article class="order-item">
+                <a class="order-item__media" [routerLink]="['/product', item.productSlug]">
+                  @if (item.imageUrl) {
+                    <img [src]="item.imageUrl" [alt]="item.productName" />
+                  }
+                </a>
+                <div class="order-item__info">
+                  <a class="order-item__name" [routerLink]="['/product', item.productSlug]">
+                    {{ item.productName }}
+                  </a>
+                  <p class="order-item__variant">
+                    {{ item.colorName }} · Size {{ item.size }}
+                  </p>
+                  <p class="order-item__sku">{{ item.sku }}</p>
+                  <p class="order-item__qty">
+                    Quantity {{ item.quantity }} ·
+                    {{ item.unitPrice | currency: 'INR' : 'symbol' : '1.0-0' }} each
+                  </p>
+                </div>
+                <span class="order-item__total">
+                  {{ item.lineTotal | currency: 'INR' : 'symbol' : '1.0-0' }}
+                </span>
+              </article>
+            }
+          </div>
+        </div>
+
+        <div class="order__info-grid">
+          <div class="panel">
+            <h2 class="panel__title">Delivery</h2>
+            <p class="order__name">{{ order.shippingAddress.fullName }}</p>
+            <p>{{ order.shippingAddress.line1 }}</p>
+            @if (order.shippingAddress.line2) {
+              <p>{{ order.shippingAddress.line2 }}</p>
+            }
+            <p>
+              {{ order.shippingAddress.city }}, {{ order.shippingAddress.state }}
+              {{ order.shippingAddress.postalCode }}
+            </p>
+            <p>{{ order.shippingAddress.country }}</p>
+            <p class="order__meta-line">{{ order.shippingAddress.phone }}</p>
+
+            <hr class="divider" />
+
+            <p class="order__meta-line">
+              <app-icon name="truck" [size]="14" />
+              {{ order.shippingMethod }} delivery
+            </p>
+            @if (order.carrier) {
+              <p class="order__meta-line">
+                <app-icon name="package" [size]="14" />
+                {{ order.carrier }}
+              </p>
+            }
+            @if (order.trackingNumber) {
+              <p class="order__meta-line">
+                <app-icon name="map-pin" [size]="14" />
+                {{ order.trackingNumber }}
+              </p>
+            } @else {
+              <p class="order__meta-line muted">Tracking will appear once dispatched.</p>
+            }
+          </div>
+
+          <div class="panel">
+            <h2 class="panel__title">Payment</h2>
+            <p class="order__name">
+              Cash on delivery
+            </p>
+            <p class="order__meta-line">
+              <span class="status status--{{ order.paymentStatus === 'Paid' ? 'paid' : 'unpaid' }}">
+                {{ order.paymentStatus }}
+              </span>
+            </p>
+            @if (order.paymentReference) {
+              <p class="order__meta-line">Reference {{ order.paymentReference }}</p>
+            }
+            <p class="order__meta-line">{{ order.email }}</p>
+
+            @if (order.notes) {
+              <hr class="divider" />
+              <p class="muted tiny uppercase">Order notes</p>
+              <p class="order__notes">{{ order.notes }}</p>
+            }
+          </div>
+        </div>
+      </section>
+
+      <aside class="summary" aria-label="Order summary">
+        <h2 class="summary__title">Summary</h2>
+
+        <div class="summary__rows">
+          <div class="summary__row">
+            <span>Subtotal</span>
+            <span>{{ order.subtotal | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+          </div>
+          @if (order.discountTotal > 0) {
+            <div class="summary__row summary__row--discount">
+              <span>Discount{{ order.couponCode ? ' · ' + order.couponCode : '' }}</span>
+              <span>−{{ order.discountTotal | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          }
+          <div class="summary__row">
+            <span>Shipping</span>
+            <span>
+              {{ order.shippingTotal === 0 ? 'Complimentary' : (order.shippingTotal | currency: 'INR' : 'symbol' : '1.0-0') }}
+            </span>
+          </div>
+        </div>
+
+        <div class="summary__total">
+          <span>Total</span>
+          <strong>{{ order.total | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+        </div>
+
+        <div class="summary__actions">
+          <a class="btn btn--block btn--outline" routerLink="/shop">Continue shopping</a>
+          <a class="summary__link" routerLink="/contact">
+            <app-icon name="mail" [size]="13" />
+            Ask client care
+          </a>
+        </div>
+
+        <ul class="summary__assurances">
+          <li><app-icon name="refresh" [size]="15" /> Easy 7-day returns</li>
+          <li><app-icon name="shield" [size]="15" /> Considered, secure checkout</li>
+        </ul>
+      </aside>
+    </div>
+  }
+}

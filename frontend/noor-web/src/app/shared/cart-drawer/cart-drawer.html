@@ -1,0 +1,106 @@
+@if (cartService.drawerOpen()) {
+  <div class="drawer">
+    <button
+      type="button"
+      class="drawer__scrim"
+      (click)="close()"
+      aria-label="Close shopping bag"
+    ></button>
+
+    <aside class="drawer__panel" aria-label="Shopping bag">
+      <header class="drawer__head">
+        <div>
+          <p class="eyebrow eyebrow--plain">Your selection</p>
+          <h2>Shopping bag <span>({{ cartService.itemCount() }})</span></h2>
+        </div>
+        <button type="button" class="icon-btn" (click)="close()" aria-label="Close bag">
+          <app-icon name="close" [size]="19" />
+        </button>
+      </header>
+
+      @if (cart() && cart()!.itemCount > 0) {
+        <div class="drawer__shipping">
+          @if (cart()!.freeShippingRemaining > 0) {
+            <p>
+              You are
+              <strong>{{ cart()!.freeShippingRemaining | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+              away from complimentary shipping.
+            </p>
+          } @else {
+            <p>Complimentary shipping has been applied.</p>
+          }
+          <div class="drawer__bar">
+            <span [style.width.%]="progress()"></span>
+          </div>
+        </div>
+
+        <div class="drawer__items">
+          @for (item of cart()!.items; track item.id) {
+            <article class="drawer__item">
+              <a class="drawer__image" [routerLink]="['/product', item.productSlug]" (click)="close()">
+                @if (item.imageUrl) {
+                  <img [src]="item.imageUrl" [alt]="item.productName" />
+                }
+              </a>
+
+              <div class="drawer__info">
+                <a class="drawer__name" [routerLink]="['/product', item.productSlug]" (click)="close()">
+                  {{ item.productName }}
+                </a>
+                <p class="drawer__variant">{{ item.colorName }} · {{ item.size }}</p>
+                <div class="drawer__row">
+                  <app-quantity-stepper
+                    [value]="item.quantity"
+                    [max]="item.stockQuantity"
+                    (valueChange)="cartService.update(item.id, $event)"
+                  />
+                  <span class="drawer__price">
+                    {{ item.lineTotal | currency: 'INR' : 'symbol' : '1.0-0' }}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  class="drawer__remove"
+                  (click)="cartService.remove(item.id)"
+                >
+                  Remove
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+
+        <footer class="drawer__foot">
+          <div class="drawer__line">
+            <span>Subtotal</span>
+            <strong>{{ cart()!.subtotal | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+          @if (cart()!.discountTotal > 0) {
+            <div class="drawer__line drawer__line--discount">
+              <span>Discount{{ cart()!.couponCode ? ' · ' + cart()!.couponCode : '' }}</span>
+              <strong>−{{ cart()!.discountTotal | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+            </div>
+          }
+          <p class="drawer__note">Taxes included · cash on delivery only.</p>
+          <button type="button" class="btn btn--block" (click)="checkout()">
+            Proceed to checkout
+            <app-icon name="arrow-right" [size]="15" />
+          </button>
+          <a class="drawer__view" routerLink="/cart" (click)="close()">View full bag</a>
+        </footer>
+      } @else {
+        <div class="drawer__empty">
+          <span class="drawer__empty-icon">
+            <app-icon name="bag" [size]="30" />
+          </span>
+          <h3>Your bag is waiting.</h3>
+          <p>
+            Explore considered pieces in breathable fabrics, made to layer beautifully
+            into every day.
+          </p>
+          <a class="btn" routerLink="/shop" (click)="close()">Discover the collection</a>
+        </div>
+      }
+    </aside>
+  </div>
+}

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2eadc"/><stop offset="1" stop-color="#ded1bd"/>
+    </linearGradient>
+    <linearGradient id="fabric1" x1="0.1" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#51483d"/><stop offset="0.45" stop-color="#2e2a24"/><stop offset="1" stop-color="#242019"/>
+    </linearGradient>
+    <linearGradient id="veil1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#51483d" stop-opacity="0.72"/><stop offset="1" stop-color="#2e2a24" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="grain1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg1)"/>
+  
+  <circle cx="652" cy="196" r="118" fill="#a8834b" opacity="0.13"/>
+  <circle cx="652" cy="196" r="88" fill="none" stroke="#a8834b" stroke-opacity="0.22" stroke-width="1"/>
+  <path d="M160 858 L160 420 A 240 240 0 0 1 640 420 L640 858" fill="none" stroke="#cbbda6" stroke-opacity="0.75" stroke-width="1.2"/>
+  <path d="M140 858 L140 412 A 260 260 0 0 1 660 412 L660 858" fill="none" stroke="#a8834b" stroke-opacity="0.15" stroke-width="1"/>
+  
+      <g opacity="0.96">
+        <path d="M188 830 C 150 650 208 408 400 344 C 594 408 650 650 612 830 C 554 902 246 902 188 830 Z" fill="url(#veil1)"/>
+        <path d="M248 760 C 222 610 274 454 400 414 C 526 454 578 610 552 760 C 514 808 286 808 248 760 Z" fill="#242019" opacity="0.22"/>
+        <path d="M258 560 C 320 516 480 516 542 560 C 508 622 292 622 258 560 Z" fill="#f2eadc" opacity="0.20"/>
+        <path d="M206 740 C 246 646 300 596 400 570 C 500 596 554 646 594 740" fill="none" stroke="#cbbda6" stroke-opacity="0.45" stroke-width="2"/>
+        <path d="M182 852 C 286 906 514 906 618 852" fill="none" stroke="#a8834b" stroke-opacity="0.55" stroke-width="2"/>
+      </g>
+  <rect width="800" height="1000" filter="url(#grain1)" opacity="0.045"/>
+  
+  <g fill="#242019">
+    <text x="58" y="78" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="7">NOOR</text>
+    <text x="58" y="101" font-family="Arial, sans-serif" font-size="8" letter-spacing="3" opacity="0.58">MODEST ATELIER</text>
+    <text x="58" y="918" font-family="Arial, sans-serif" font-size="9" letter-spacing="4" opacity="0.6">hijabs</text>
+    <text x="58" y="955" font-family="Georgia, 'Times New Roman', serif" font-size="29">Jersey Everyday Hijab</text>
+    <text x="742" y="955" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="15" opacity="0.7">N° 01</text>
+    <line x1="58" y1="882" x2="742" y2="882" stroke="#242019" stroke-opacity="0.18" stroke-width="1"/>
+  </g>
+</svg>

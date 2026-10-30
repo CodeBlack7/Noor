@@ -1,0 +1,337 @@
+<div class="container">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span>Shop</span>
+  </nav>
+</div>
+
+<header class="shop-head">
+  <div class="container shop-head__inner">
+    <div>
+      <p class="eyebrow">The collection</p>
+      <h1>{{ categoryName() }}</h1>
+      <p class="shop-head__intro">
+        @if (filters().search) {
+          Results for <em>“{{ filters().search }}”</em> — quietly considered pieces in
+          breathable fabrics.
+        } @else {
+          Considered modest wear for every day and every occasion. Cut generously,
+          finished by hand, made to last.
+        }
+      </p>
+    </div>
+    <p class="shop-head__count">
+      <span>{{ result()?.totalCount ?? '—' }}</span>
+      pieces
+    </p>
+  </div>
+</header>
+
+<div class="container shop">
+  <button
+    type="button"
+    class="shop__filter-toggle"
+    (click)="filtersOpen.set(true)"
+  >
+    <app-icon name="filter" [size]="17" />
+    Filters
+    @if (activeChips().length > 0) {
+      <span class="shop__filter-count">{{ activeChips().length }}</span>
+    }
+  </button>
+
+  <aside class="filters" [class.filters--open]="filtersOpen()" aria-label="Product filters">
+    <div class="filters__panel">
+      <header class="filters__head">
+        <h2>Refine</h2>
+        <button
+          type="button"
+          class="icon-btn filters__close"
+          (click)="filtersOpen.set(false)"
+          aria-label="Close filters"
+        >
+          <app-icon name="close" [size]="19" />
+        </button>
+      </header>
+
+      <div class="filters__group">
+        <p class="filters__label">Search</p>
+        <form class="filters__search" (ngSubmit)="applySearch()">
+          <input
+            type="search"
+            name="sidebarSearch"
+            [(ngModel)]="searchInput"
+            placeholder="Search the atelier"
+            aria-label="Search products"
+          />
+          <button type="submit" aria-label="Search">
+            <app-icon name="search" [size]="16" />
+          </button>
+        </form>
+      </div>
+
+      @if (categories().length > 0) {
+        <div class="filters__group">
+          <p class="filters__label">Collections</p>
+          <ul class="filters__list">
+            <li>
+              <button
+                type="button"
+                class="filters__option"
+                [class.is-active]="filters().category === ''"
+                (click)="update({ category: '' })"
+              >
+                All pieces
+                <span>{{ result()?.totalCount ?? '' }}</span>
+              </button>
+            </li>
+            @for (category of categories(); track category.id) {
+              <li>
+                <button
+                  type="button"
+                  class="filters__option"
+                  [class.is-active]="filters().category === category.slug"
+                  (click)="toggleCategory(category.slug)"
+                >
+                  {{ category.name }}
+                  <span>{{ category.productCount }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <div class="filters__group">
+        <p class="filters__label">Price</p>
+        <div class="filters__prices">
+          <button
+            type="button"
+            class="filters__price-chip"
+            [class.is-active]="isPresetActive(null, 999)"
+            (click)="applyPreset(null, 999)"
+          >
+            Under ₹999
+          </button>
+          <button
+            type="button"
+            class="filters__price-chip"
+            [class.is-active]="isPresetActive(1000, 4999)"
+            (click)="applyPreset(1000, 4999)"
+          >
+            ₹1,000 – ₹4,999
+          </button>
+          <button
+            type="button"
+            class="filters__price-chip"
+            [class.is-active]="isPresetActive(5000, 9999)"
+            (click)="applyPreset(5000, 9999)"
+          >
+            ₹5,000 – ₹9,999
+          </button>
+          <button
+            type="button"
+            class="filters__price-chip"
+            [class.is-active]="isPresetActive(10000, null)"
+            (click)="applyPreset(10000, null)"
+          >
+            ₹10,000+
+          </button>
+        </div>
+        <form class="filters__range" (ngSubmit)="applyPrice()">
+          <input
+            type="number"
+            name="minPrice"
+            [(ngModel)]="minInput"
+            placeholder="Min"
+            min="0"
+            aria-label="Minimum price"
+          />
+          <span>–</span>
+          <input
+            type="number"
+            name="maxPrice"
+            [(ngModel)]="maxInput"
+            placeholder="Max"
+            min="0"
+            aria-label="Maximum price"
+          />
+          <button type="submit" class="btn btn--sm btn--outline">Go</button>
+        </form>
+        @if (facets(); as facet) {
+          <p class="filters__hint">
+            Collection ranges {{ facet.minPrice | currency: 'INR' : 'symbol' : '1.0-0' }} –
+            {{ facet.maxPrice | currency: 'INR' : 'symbol' : '1.0-0' }}
+          </p>
+        }
+      </div>
+
+      @if (facets()?.sizes?.length) {
+        <div class="filters__group">
+          <p class="filters__label">Size</p>
+          <div class="filters__sizes">
+            @for (size of facets()!.sizes; track size) {
+              <button
+                type="button"
+                class="filters__size"
+                [class.is-active]="filters().size === size"
+                (click)="toggleSize(size)"
+              >
+                {{ size }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (facets()?.colors?.length) {
+        <div class="filters__group">
+          <p class="filters__label">Colour</p>
+          <div class="filters__colors">
+            @for (color of facets()!.colors; track color.hex + color.name) {
+              <button
+                type="button"
+                class="filters__color"
+                [class.is-active]="filters().color.toLowerCase() === color.name.toLowerCase()"
+                (click)="toggleColor(color.name)"
+                [attr.title]="color.name"
+              >
+                <i [style.background]="color.hex"></i>
+                <span>{{ color.name }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="filters__group">
+        <button
+          type="button"
+          class="filters__option filters__option--toggle"
+          [class.is-active]="filters().featured"
+          (click)="toggleFeatured()"
+        >
+          Atelier favourites
+          <span class="filters__check">
+            <app-icon name="check" [size]="12" />
+          </span>
+        </button>
+      </div>
+
+      <div class="filters__foot">
+        <button type="button" class="btn btn--block" (click)="filtersOpen.set(false)">
+          View {{ result()?.totalCount ?? 0 }} pieces
+        </button>
+        <button
+          type="button"
+          class="filters__clear"
+          [disabled]="!hasFilters()"
+          (click)="clearAll()"
+        >
+          Clear all filters
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <section class="results">
+    <div class="results__bar">
+      <div class="results__chips">
+        @for (chip of activeChips(); track chip.key + chip.label) {
+          <button type="button" class="chip" (click)="clearChip(chip.key)">
+            {{ chip.label }}
+            <app-icon name="close" [size]="12" />
+          </button>
+        }
+        @if (hasFilters()) {
+          <button type="button" class="results__clear" (click)="clearAll()">Clear all</button>
+        }
+      </div>
+
+      <label class="results__sort">
+        <span class="sr-only">Sort by</span>
+        <select [ngModel]="filters().sort" (ngModelChange)="setSort($event)">
+          <option value="featured">Featured</option>
+          <option value="newest">Newest</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="rating">Top rated</option>
+          <option value="name">Name A–Z</option>
+        </select>
+      </label>
+    </div>
+
+    @if (loading()) {
+      <div class="product-grid results__grid">
+        @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track item) {
+          <div class="product-skeleton">
+            <div class="product-skeleton__media skeleton"></div>
+            <div class="product-skeleton__line skeleton"></div>
+            <div class="product-skeleton__line product-skeleton__line--short skeleton"></div>
+          </div>
+        }
+      </div>
+    } @else if (result() && result()!.items.length > 0) {
+      <div class="product-grid results__grid">
+        @for (product of result()!.items; track product.id) {
+          <app-product-card [product]="product" />
+        }
+      </div>
+
+      @if (pages().length > 1) {
+        <nav class="pager" aria-label="Pagination">
+          <button
+            type="button"
+            class="pager__arrow"
+            [disabled]="result()!.page <= 1"
+            (click)="goToPage(result()!.page - 1)"
+            aria-label="Previous page"
+          >
+            <app-icon name="arrow-left" [size]="15" />
+          </button>
+
+          @for (page of pages(); track page) {
+            <button
+              type="button"
+              class="pager__page"
+              [class.is-active]="page === result()!.page"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          }
+
+          <button
+            type="button"
+            class="pager__arrow"
+            [disabled]="result()!.page >= result()!.totalPages"
+            (click)="goToPage(result()!.page + 1)"
+            aria-label="Next page"
+          >
+            <app-icon name="arrow-right" [size]="15" />
+          </button>
+        </nav>
+      }
+    } @else {
+      <div class="empty-state results__empty">
+        <app-icon name="search" [size]="26" />
+        <h3>Nothing quite matches.</h3>
+        <p>
+          We could not find pieces for that combination. Try removing a filter, or
+          explore the full collection.
+        </p>
+        <button type="button" class="btn" (click)="clearAll()">View all pieces</button>
+      </div>
+    }
+  </section>
+</div>
+
+@if (filtersOpen()) {
+  <button
+    type="button"
+    class="filters__scrim"
+    (click)="filtersOpen.set(false)"
+    aria-label="Close filters"
+  ></button>
+}

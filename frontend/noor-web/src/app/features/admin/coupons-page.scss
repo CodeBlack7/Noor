@@ -1,0 +1,131 @@
+.coupon-editor {
+  margin-bottom: 14px;
+}
+
+.coupon-editor__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.coupon-editor__hint {
+  margin-left: auto;
+  font-size: 9.5px;
+  color: var(--subtle);
+}
+
+.coupon-table {
+  min-width: 920px;
+}
+
+.coupon-table td {
+  vertical-align: middle;
+}
+
+.coupon-cell {
+  min-width: 210px;
+}
+
+.coupon-cell__code {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border: 1px dashed #d9c6a2;
+  background: var(--gold-wash);
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+.coupon-cell__description {
+  margin-top: 4px;
+  max-width: 260px;
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: var(--subtle);
+}
+
+.cell-nowrap {
+  white-space: nowrap;
+}
+
+.cell-muted {
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.cell-discount {
+  font-weight: 600;
+}
+
+.coupon-window {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.coupon-window__sep {
+  margin: 0 3px;
+  color: var(--subtle);
+}
+
+.coupon-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.coupon-state::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.coupon-state--live {
+  color: var(--success);
+  background: #e8f0ea;
+  border-color: #cfe0d4;
+}
+
+.coupon-state--scheduled {
+  color: #896827;
+  background: #f5ecd8;
+  border-color: #e8d7b6;
+}
+
+.coupon-state--expired {
+  color: var(--muted);
+  background: #f1ede5;
+  border-color: var(--line);
+}
+
+.coupon-state--paused {
+  color: #6c5c72;
+  background: #f0ebf2;
+  border-color: #dfd6e3;
+}
+
+.coupon-state--exhausted {
+  color: var(--danger);
+  background: #f6e9e6;
+  border-color: #ecd2cd;
+}
+
+@media (max-width: 640px) {
+  .coupon-editor__hint {
+    width: 100%;
+    margin-left: 0;
+  }
+}

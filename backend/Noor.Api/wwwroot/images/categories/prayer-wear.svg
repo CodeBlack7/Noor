@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" width="900" height="1100">
+  
+  <defs>
+    <linearGradient id="bg7" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9e7db"/><stop offset="1" stop-color="#d2d0c1"/>
+    </linearGradient>
+    <linearGradient id="fabric7" x1="0.1" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#7c836c"/><stop offset="0.45" stop-color="#59604d"/><stop offset="1" stop-color="#303327"/>
+    </linearGradient>
+    <linearGradient id="veil7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7c836c" stop-opacity="0.72"/><stop offset="1" stop-color="#59604d" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="grain7"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="900" height="1100" fill="url(#bg7)"/>
+  <circle cx="720" cy="220" r="140" fill="#9a8a54" opacity="0.12"/>
+  <path d="M170 950 L170 460 A 280 280 0 0 1 730 460 L730 950" fill="none" stroke="#c3c1af" stroke-opacity="0.8" stroke-width="1.2"/>
+  <g transform="translate(50 0)">
+    
+      <g opacity="0.96">
+        <path d="M210 840 C 182 650 238 466 400 424 C 562 466 618 650 590 840 C 520 880 280 880 210 840 Z" fill="url(#fabric7)"/>
+        <path d="M400 424 C 336 446 302 500 304 552 C 350 582 450 582 496 552 C 498 500 464 446 400 424 Z" fill="#7c836c" opacity="0.7"/>
+        <path d="M400 424 C 372 320 282 296 238 344 C 286 358 338 398 354 448" fill="none" stroke="#7c836c" stroke-opacity="0.8" stroke-width="28" stroke-linecap="round"/>
+        <path d="M258 698 C 336 726 464 726 542 698" fill="none" stroke="#c3c1af" stroke-opacity="0.28" stroke-width="2"/>
+        <path d="M286 780 C 344 798 456 798 514 780" fill="none" stroke="#c3c1af" stroke-opacity="0.2" stroke-width="2"/>
+      </g>
+  </g>
+  <rect width="900" height="1100" filter="url(#grain7)" opacity="0.05"/>
+  <g fill="#303327">
+    <text x="60" y="80" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="7">NOOR</text>
+    <line x1="60" y1="960" x2="840" y2="960" stroke="#303327" stroke-opacity="0.2"/>
+    <text x="60" y="1000" font-family="Arial, sans-serif" font-size="9" letter-spacing="4" opacity="0.6">RITUAL, MADE COMFORTABLE</text>
+    <text x="60" y="1048" font-family="Georgia, 'Times New Roman', serif" font-size="40">Prayer Wear</text>
+    <text x="840" y="1048" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="15" opacity="0.6">COLLECTION</text>
+  </g>
+</svg>

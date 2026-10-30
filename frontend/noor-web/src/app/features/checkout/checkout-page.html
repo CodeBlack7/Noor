@@ -1,0 +1,342 @@
+<div class="container">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/cart">Bag</a>
+    <span class="sep">/</span>
+    <span>Checkout</span>
+  </nav>
+</div>
+
+<div class="container checkout-head">
+  <div>
+    <p class="eyebrow">Almost yours</p>
+    <h1>Checkout</h1>
+  </div>
+  <p class="checkout-head__secure">
+    <app-icon name="lock" [size]="14" />
+    Cash on delivery · India only
+  </p>
+</div>
+
+@if (!cart() || cart()!.itemCount === 0) {
+  @if (!placing()) {
+    <div class="container section checkout-empty">
+      <div class="empty-state">
+        <h3>There is nothing to check out.</h3>
+        <p>Your bag is empty. Explore the collection and find a piece to live in.</p>
+        <a class="btn" routerLink="/shop">Discover the collection</a>
+      </div>
+    </div>
+  }
+} @else {
+  @if (cart(); as cart) {
+    <div class="container checkout">
+      <form class="checkout__form" (ngSubmit)="placeOrder(checkoutForm.valid)" #checkoutForm="ngForm" novalidate>
+        <ol class="steps" aria-hidden="true">
+          <li class="is-done">
+            <span>01</span>
+            Bag
+          </li>
+          <li class="is-active">
+            <span>02</span>
+            Delivery
+          </li>
+          <li>
+            <span>03</span>
+            Confirmation
+          </li>
+        </ol>
+
+        <section class="checkout-block">
+          <div class="checkout-block__head">
+            <h2>Contact</h2>
+            <a routerLink="/account/profile" class="checkout-block__link">Edit profile</a>
+          </div>
+          <div class="contact-card">
+            <app-icon name="mail" [size]="16" />
+            <div>
+              <strong>{{ session.user()?.fullName }}</strong>
+              <p>{{ session.user()?.email }}</p>
+            </div>
+            <span class="status status--active">Signed in</span>
+          </div>
+        </section>
+
+        <section class="checkout-block">
+          <div class="checkout-block__head">
+            <h2>Delivery address</h2>
+            @if (addresses().length > 0 && !showAddressForm()) {
+              <button type="button" class="checkout-block__link" (click)="openAddressForm()">
+                <app-icon name="plus" [size]="13" />
+                New address
+              </button>
+            }
+          </div>
+
+          @if (addressesLoading()) {
+            <p class="checkout-loading">Loading saved addresses…</p>
+          } @else {
+            @if (addresses().length > 0) {
+              <div class="address-grid">
+                @for (address of addresses(); track address.id) {
+                  <label
+                    class="address-card"
+                    [class.is-selected]="selectedAddressId() === address.id"
+                  >
+                    <input
+                      type="radio"
+                      name="addressId"
+                      [value]="address.id"
+                      [checked]="selectedAddressId() === address.id"
+                      (change)="selectAddress(address.id)"
+                    />
+                    <span class="address-card__head">
+                      <strong>{{ address.label }}</strong>
+                      @if (address.isDefault) {
+                        <span class="badge badge--muted">Default</span>
+                      }
+                    </span>
+                    <span class="address-card__name">{{ address.fullName }}</span>
+                    <span class="address-card__line">{{ address.line1 }}</span>
+                    @if (address.line2) {
+                      <span class="address-card__line">{{ address.line2 }}</span>
+                    }
+                    <span class="address-card__line">
+                      {{ address.city }}, {{ address.state }} {{ address.postalCode }}
+                    </span>
+                    <span class="address-card__line">{{ address.country }}</span>
+                    <span class="address-card__phone">{{ address.phone }}</span>
+                  </label>
+                }
+              </div>
+            }
+
+            @if (showAddressForm()) {
+              <div class="address-form" [class.address-form--inline]="addresses().length > 0">
+                <div class="address-form__head">
+                  <h3>New address</h3>
+                  @if (addresses().length > 0) {
+                    <button type="button" class="icon-btn" (click)="cancelAddressForm()" aria-label="Cancel">
+                      <app-icon name="close" [size]="17" />
+                    </button>
+                  }
+                </div>
+
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="label">Label</label>
+                    <input id="label" name="label" [(ngModel)]="address.label" placeholder="Home" required />
+                  </div>
+                  <div class="field">
+                    <label for="fullName">Full name</label>
+                    <input id="fullName" name="fullName" [(ngModel)]="address.fullName" required />
+                  </div>
+                  <div class="field">
+                    <label for="phone">Phone</label>
+                    <input id="phone" name="phone" [(ngModel)]="address.phone" placeholder="+91 98765 43210" required />
+                  </div>
+                  <div class="field">
+                    <label for="line1">Address line 1</label>
+                    <input id="line1" name="line1" [(ngModel)]="address.line1" required />
+                  </div>
+                  <div class="field span-2">
+                    <label for="line2">Address line 2 (optional)</label>
+                    <input id="line2" name="line2" [(ngModel)]="address.line2" />
+                  </div>
+                  <div class="field">
+                    <label for="city">City</label>
+                    <input id="city" name="city" [(ngModel)]="address.city" required />
+                  </div>
+                  <div class="field">
+                    <label for="state">State / UT</label>
+                    <input id="state" name="state" [(ngModel)]="address.state" placeholder="Telangana" required />
+                  </div>
+                  <div class="field">
+                    <label for="postalCode">PIN code</label>
+                    <input id="postalCode" name="postalCode" [(ngModel)]="address.postalCode" placeholder="500034" required />
+                  </div>
+                  <div class="field">
+                    <label for="country">Country</label>
+                    <input id="country" name="country" [(ngModel)]="address.country" readonly />
+                  </div>
+                  <label class="checkbox span-2">
+                    <input type="checkbox" name="isDefault" [(ngModel)]="address.isDefault" />
+                    Set as my default delivery address
+                  </label>
+                </div>
+                <p class="field-hint">Noor currently delivers within India only.</p>
+
+                <button
+                  type="button"
+                  class="btn btn--outline"
+                  [disabled]="savingAddress()"
+                  (click)="saveAddress()"
+                >
+                  {{ savingAddress() ? 'Saving…' : 'Save address' }}
+                </button>
+              </div>
+            }
+          }
+        </section>
+
+        <section class="checkout-block">
+          <div class="checkout-block__head">
+            <h2>Delivery method</h2>
+          </div>
+          <div class="option-list">
+            <label
+              class="option-card"
+              [class.is-selected]="shippingMethod() === 'Standard'"
+            >
+              <input
+                type="radio"
+                name="shipping"
+                value="Standard"
+                [checked]="shippingMethod() === 'Standard'"
+                (change)="setShipping('Standard')"
+              />
+              <span class="option-card__body">
+                <span class="option-card__title">
+                  <strong>Standard delivery</strong>
+                  <span>{{ shippingCost() === 0 ? 'Complimentary' : (shippingCost() | currency: 'INR' : 'symbol' : '1.0-0') }}</span>
+                </span>
+                <span class="option-card__note">3–5 working days · tracked · free over ₹1,999</span>
+              </span>
+            </label>
+
+            <label class="option-card" [class.is-selected]="shippingMethod() === 'Express'">
+              <input
+                type="radio"
+                name="shipping"
+                value="Express"
+                [checked]="shippingMethod() === 'Express'"
+                (change)="setShipping('Express')"
+              />
+              <span class="option-card__body">
+                <span class="option-card__title">
+                  <strong>Express delivery</strong>
+                  <span>{{ 249 | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+                </span>
+                <span class="option-card__note">1–2 working days · tracked</span>
+              </span>
+            </label>
+          </div>
+        </section>
+
+        <section class="checkout-block">
+          <div class="checkout-block__head">
+            <h2>Payment</h2>
+            <span class="checkout-block__demo">COD only</span>
+          </div>
+
+          <div class="option-list">
+            <div class="option-card is-selected">
+              <span class="option-card__body">
+                <span class="option-card__title">
+                  <strong><app-icon name="package" [size]="15" /> Cash on delivery</strong>
+                  <span>Only option</span>
+                </span>
+                <span class="option-card__note">
+                  Pay in cash when your order arrives. No card, UPI, or netbanking details are collected.
+                </span>
+              </span>
+            </div>
+          </div>
+          <p class="checkout-loading mt-16">
+            <app-icon name="shield" [size]="13" />
+            Online payments are not enabled yet. This keeps your payment details safe until a secure
+            payment partner is integrated.
+          </p>
+        </section>
+
+        <section class="checkout-block">
+          <div class="checkout-block__head">
+            <h2>Order notes</h2>
+            <span class="checkout-block__demo">Optional</span>
+          </div>
+          <div class="field">
+            <label for="notes" class="sr-only">Order notes</label>
+            <textarea
+              id="notes"
+              name="notes"
+              [(ngModel)]="notes"
+              placeholder="A gift note, delivery instruction, or anything we should know…"
+            ></textarea>
+          </div>
+        </section>
+
+        <div class="checkout__submit-mobile">
+          <button type="submit" class="btn btn--block" [disabled]="placing()">
+            {{ placing() ? 'Placing order…' : 'Place order' }}
+            <app-icon name="lock" [size]="14" />
+          </button>
+        </div>
+      </form>
+
+      <aside class="summary" aria-label="Order summary">
+        <h2 class="summary__title">Your order <span>({{ cart.itemCount }})</span></h2>
+
+        <div class="summary__items">
+          @for (item of cart.items; track item.id) {
+            <div class="summary-item">
+              <div class="summary-item__media">
+                @if (item.imageUrl) {
+                  <img [src]="item.imageUrl" [alt]="item.productName" />
+                }
+                <span class="summary-item__qty">{{ item.quantity }}</span>
+              </div>
+              <div class="summary-item__info">
+                <p class="summary-item__name">{{ item.productName }}</p>
+                <p class="summary-item__variant">{{ item.colorName }} · {{ item.size }}</p>
+              </div>
+              <span class="summary-item__price">
+                {{ item.lineTotal | currency: 'INR' : 'symbol' : '1.0-0' }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <div class="summary__rows">
+          <div class="summary__row">
+            <span>Subtotal</span>
+            <span>{{ cart.subtotal | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+          </div>
+          @if (cart.discountTotal > 0) {
+            <div class="summary__row summary__row--discount">
+              <span>Discount{{ cart.couponCode ? ' · ' + cart.couponCode : '' }}</span>
+              <span>−{{ cart.discountTotal | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          }
+          <div class="summary__row">
+            <span>Shipping</span>
+            <span>
+              {{ shippingCost() === 0 ? 'Complimentary' : (shippingCost() | currency: 'INR' : 'symbol' : '1.0-0') }}
+            </span>
+          </div>
+        </div>
+
+        <div class="summary__total">
+          <span>Total</span>
+          <strong>{{ orderTotal() | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+        </div>
+        <p class="summary__tax">INR · prices include taxes</p>
+
+        <button
+          type="button"
+          class="btn btn--block summary__place"
+          [disabled]="placing()"
+          (click)="placeOrder(true)"
+        >
+          {{ placing() ? 'Placing order…' : 'Place order' }}
+        </button>
+
+        <ul class="summary__assurances">
+          <li><app-icon name="truck" [size]="15" /> Tracked delivery</li>
+          <li><app-icon name="refresh" [size]="15" /> 7-day returns</li>
+          <li><app-icon name="shield" [size]="15" /> Considered, secure checkout</li>
+        </ul>
+      </aside>
+    </div>
+  }
+}

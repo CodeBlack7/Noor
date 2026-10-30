@@ -1,0 +1,470 @@
+<header class="admin-page-head">
+  <div>
+    <a class="admin-back" routerLink="/admin/products">
+      <app-icon name="arrow-left" [size]="13" />
+      Back to products
+    </a>
+    <h1>{{ isEditing() ? 'Edit product' : 'New product' }}</h1>
+    <p class="admin-page-sub">
+      @if (isEditing()) {
+        Update the story, imagery, and inventory for this piece.
+      } @else {
+        Add a new piece to the catalogue — details, imagery, then variants.
+      }
+    </p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn--sm btn--ghost" routerLink="/admin/products">Cancel</a>
+    <button type="button" class="btn btn--sm" [disabled]="saving() || loading()" (click)="save()">
+      @if (saving()) {
+        Saving…
+      } @else {
+        {{ isEditing() ? 'Save changes' : 'Create product' }}
+      }
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="loading-state"><span class="spinner"></span> Loading the product</div>
+} @else if (failed()) {
+  <div class="admin-empty">
+    <p>This product could not be loaded.</p>
+    <a class="btn btn--sm btn--outline mt-16" routerLink="/admin/products">Back to products</a>
+  </div>
+} @else {
+  <form class="product-form" (ngSubmit)="save()" novalidate>
+    <div class="product-form__main">
+      <section class="admin-panel">
+        <div class="admin-panel__head">
+          <div>
+            <h2>Details</h2>
+            <p class="admin-panel__sub">The words and facts that tell this piece's story.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="productName">Product name</label>
+            <input
+              id="productName"
+              name="productName"
+              [(ngModel)]="form.name"
+              placeholder="The Everyday Burqa"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="productSlug">URL slug</label>
+            <input
+              id="productSlug"
+              name="productSlug"
+              [(ngModel)]="form.slug"
+              placeholder="generated-from-the-name"
+            />
+            <p class="field-hint">Leave empty to generate from the name.</p>
+          </div>
+
+          <div class="field">
+            <label for="productCategory">Collection</label>
+            <select id="productCategory" name="productCategory" [(ngModel)]="form.categoryId" required>
+              <option [ngValue]="null" disabled>Choose a collection</option>
+              @for (category of categories(); track category.id) {
+                <option [ngValue]="category.id">{{ category.name }}</option>
+              }
+            </select>
+            @if (categories().length === 0) {
+              <p class="field-hint">Create a collection first.</p>
+            }
+          </div>
+
+          <div class="field span-2">
+            <label for="productShort">Short description</label>
+            <textarea
+              id="productShort"
+              name="productShort"
+              [(ngModel)]="form.shortDescription"
+              rows="2"
+              maxlength="400"
+              placeholder="One considered sentence for product cards."
+              required
+            ></textarea>
+          </div>
+
+          <div class="field span-2">
+            <label for="productDescription">Full description</label>
+            <textarea
+              id="productDescription"
+              name="productDescription"
+              [(ngModel)]="form.description"
+              rows="6"
+              placeholder="Cut, fabric, movement, and the details that matter."
+              required
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label for="productFabric">Fabric</label>
+            <input
+              id="productFabric"
+              name="productFabric"
+              [(ngModel)]="form.fabric"
+              placeholder="Washed linen"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="productCare">Care instructions</label>
+            <input
+              id="productCare"
+              name="productCare"
+              [(ngModel)]="form.careInstructions"
+              placeholder="Gentle wash cold, line dry"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel__head">
+          <div>
+            <h2>Imagery</h2>
+            <p class="admin-panel__sub">
+              The first image becomes the card and catalogue image. Drag order with the arrows.
+            </p>
+          </div>
+          <span class="admin-panel__count">{{ form.images.length }} images</span>
+        </div>
+
+        <label class="upload-zone" [class.is-busy]="uploading()">
+          <app-icon [name]="uploading() ? 'clock' : 'upload'" [size]="20" />
+          <span>{{ uploading() ? 'Uploading…' : 'Upload images' }}</span>
+          <small>JPG, PNG, or WebP — up to 5 MB each</small>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            hidden
+            [disabled]="uploading()"
+            (change)="uploadImages($event)"
+          />
+        </label>
+
+        <div class="image-add">
+          <input
+            name="newImageUrl"
+            [(ngModel)]="newImageUrl"
+            placeholder="Or paste an image URL / /images/..."
+            autocomplete="off"
+          />
+          <button type="button" class="btn btn--sm btn--outline" (click)="addImageUrl()">
+            Add URL
+          </button>
+        </div>
+
+        @if (form.images.length === 0) {
+          <p class="image-empty">No imagery yet. Add at least one image before publishing.</p>
+        } @else {
+          <div class="image-list">
+            @for (image of form.images; track image; let i = $index) {
+              <div class="image-row">
+                <span class="image-row__thumb">
+                  @if (image.url) {
+                    <img [src]="image.url" alt="" />
+                  } @else {
+                    <app-icon name="image" [size]="18" />
+                  }
+                </span>
+                <div class="image-row__fields">
+                  <input
+                    [name]="'imageUrl' + i"
+                    [(ngModel)]="image.url"
+                    placeholder="/images/product.svg"
+                    aria-label="Image URL"
+                  />
+                  <input
+                    [name]="'imageAlt' + i"
+                    [(ngModel)]="image.altText"
+                    placeholder="Alt text for accessibility"
+                    aria-label="Image alt text"
+                  />
+                </div>
+                <div class="image-row__actions">
+                  @if (i === 0) {
+                    <span class="image-row__lead">Primary</span>
+                  }
+                  <button
+                    type="button"
+                    class="admin-icon-btn"
+                    [disabled]="i === 0"
+                    (click)="moveImage(i, -1)"
+                    aria-label="Move image up"
+                  >
+                    <app-icon name="chevron-up" [size]="13" />
+                  </button>
+                  <button
+                    type="button"
+                    class="admin-icon-btn"
+                    [disabled]="i === form.images.length - 1"
+                    (click)="moveImage(i, 1)"
+                    aria-label="Move image down"
+                  >
+                    <app-icon name="chevron-down" [size]="13" />
+                  </button>
+                  <button
+                    type="button"
+                    class="admin-icon-btn is-danger"
+                    (click)="removeImage(i)"
+                    aria-label="Remove image"
+                  >
+                    <app-icon name="trash" [size]="13" />
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel__head">
+          <div>
+            <h2>Variants</h2>
+            <p class="admin-panel__sub">
+              Each size and colour combination needs its own SKU and stock level.
+            </p>
+          </div>
+          <button type="button" class="btn btn--sm btn--outline" (click)="addVariant()">
+            <app-icon name="plus" [size]="13" />
+            Add variant
+          </button>
+        </div>
+
+        <div class="variant-quick">
+          <div class="field">
+            <label for="quickColour">Quick size run — colour</label>
+            <input
+              id="quickColour"
+              name="quickColour"
+              [(ngModel)]="quickColorName"
+              placeholder="Sage"
+            />
+          </div>
+          <div class="field field--hex">
+            <label for="quickHex">Hex</label>
+            <input
+              id="quickHex"
+              name="quickHex"
+              type="color"
+              [(ngModel)]="quickColorHex"
+            />
+          </div>
+          <div class="field">
+            <label for="quickSizes">Sizes</label>
+            <input
+              id="quickSizes"
+              name="quickSizes"
+              [(ngModel)]="quickSizes"
+              placeholder="S, M, L, XL"
+            />
+          </div>
+          <button type="button" class="btn btn--sm btn--outline" (click)="addSizeRun()">
+            Add run
+          </button>
+        </div>
+
+        @if (form.variants.length === 0) {
+          <p class="image-empty">No variants yet. Add a size run or an individual variant.</p>
+        } @else {
+          <div class="table-wrap">
+            <table class="data-table variant-table">
+              <thead>
+                <tr>
+                  <th>Colour</th>
+                  <th>Hex</th>
+                  <th>Size</th>
+                  <th>SKU</th>
+                  <th>Stock</th>
+                  <th>± Price</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (variant of form.variants; track variant; let i = $index) {
+                  <tr>
+                    <td>
+                      <input
+                        class="variant-input"
+                        [name]="'variantColor' + i"
+                        [(ngModel)]="variant.colorName"
+                        placeholder="Sage"
+                        aria-label="Colour name"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="variant-color"
+                        [name]="'variantHex' + i"
+                        type="color"
+                        [(ngModel)]="variant.colorHex"
+                        aria-label="Colour hex"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="variant-input variant-input--short"
+                        [name]="'variantSize' + i"
+                        [(ngModel)]="variant.size"
+                        placeholder="M"
+                        aria-label="Size"
+                      />
+                    </td>
+                    <td>
+                      <div class="variant-sku">
+                        <input
+                          class="variant-input"
+                          [name]="'variantSku' + i"
+                          [(ngModel)]="variant.sku"
+                          placeholder="NOOR-SAGE-M"
+                          aria-label="SKU"
+                        />
+                        <button
+                          type="button"
+                          class="admin-icon-btn"
+                          (click)="generateSku(variant)"
+                          title="Generate SKU"
+                          aria-label="Generate SKU"
+                        >
+                          <app-icon name="refresh" [size]="12" />
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        class="variant-input variant-input--number"
+                        [name]="'variantStock' + i"
+                        type="number"
+                        min="0"
+                        [(ngModel)]="variant.stockQuantity"
+                        aria-label="Stock quantity"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="variant-input variant-input--number"
+                        [name]="'variantAdjustment' + i"
+                        type="number"
+                        step="0.01"
+                        [(ngModel)]="variant.priceAdjustment"
+                        aria-label="Price adjustment"
+                      />
+                    </td>
+                    <td class="cell-actions">
+                      <button
+                        type="button"
+                        class="admin-icon-btn is-danger"
+                        (click)="removeVariant(i)"
+                        aria-label="Remove variant"
+                      >
+                        <app-icon name="trash" [size]="13" />
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
+
+    <aside class="product-form__side">
+      <div class="product-form__side-inner">
+        <section class="admin-panel">
+          <div class="admin-panel__head">
+            <h2>Status</h2>
+          </div>
+
+          <label class="switch-row">
+            <span>
+              <strong>Published</strong>
+              <small>Visible and purchasable on the storefront.</small>
+            </span>
+            <span class="switch">
+              <input type="checkbox" name="isActive" [(ngModel)]="form.isActive" />
+              <i></i>
+            </span>
+          </label>
+
+          <label class="switch-row">
+            <span>
+              <strong>Featured</strong>
+              <small>Shown in the home page edits and favourites.</small>
+            </span>
+            <span class="switch">
+              <input type="checkbox" name="isFeatured" [(ngModel)]="form.isFeatured" />
+              <i></i>
+            </span>
+          </label>
+        </section>
+
+        <section class="admin-panel">
+          <div class="admin-panel__head">
+            <h2>Pricing</h2>
+          </div>
+
+          <div class="field">
+            <label for="productPrice">Selling price (INR)</label>
+            <input
+              id="productPrice"
+              name="productPrice"
+              type="number"
+              min="0"
+              step="0.01"
+              [(ngModel)]="form.price"
+              required
+            />
+          </div>
+
+          <div class="field mt-12">
+            <label for="productCompare">Compare-at price</label>
+            <input
+              id="productCompare"
+              name="productCompare"
+              type="number"
+              min="0"
+              step="0.01"
+              [(ngModel)]="form.compareAtPrice"
+            />
+            <p class="field-hint">Optional. Must be higher than the selling price.</p>
+          </div>
+        </section>
+
+        <section class="admin-panel">
+          <p class="admin-note">
+            <strong>Before publishing:</strong> one image sets the catalogue card, every
+            variant needs a unique SKU, and stock must be accurate — the storefront reads it
+            live.
+          </p>
+
+          <button
+            type="submit"
+            class="btn btn--block mt-16"
+            [disabled]="saving() || uploading()"
+          >
+            @if (saving()) {
+              Saving…
+            } @else {
+              {{ isEditing() ? 'Save changes' : 'Create product' }}
+            }
+          </button>
+          <button type="button" class="btn btn--ghost btn--block mt-8" (click)="cancel()">
+            Cancel
+          </button>
+        </section>
+      </div>
+    </aside>
+  </form>
+}

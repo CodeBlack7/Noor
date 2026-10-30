@@ -1,0 +1,417 @@
+<div class="container">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/shop">Shop</a>
+    @if (product(); as product) {
+      <span class="sep">/</span>
+      <a routerLink="/shop" [queryParams]="{ category: product.categorySlug }">
+        {{ product.categoryName }}
+      </a>
+      <span class="sep">/</span>
+      <span>{{ product.name }}</span>
+    }
+  </nav>
+</div>
+
+@if (loading()) {
+  <div class="container product-loading">
+    <div class="product-loading__media skeleton"></div>
+    <div class="product-loading__copy">
+      <div class="product-loading__line skeleton"></div>
+      <div class="product-loading__line product-loading__line--title skeleton"></div>
+      <div class="product-loading__line product-loading__line--short skeleton"></div>
+      <div class="product-loading__line skeleton"></div>
+      <div class="product-loading__line product-loading__line--short skeleton"></div>
+    </div>
+  </div>
+} @else if (failed() || !product()) {
+  <div class="container section">
+    <div class="empty-state">
+      <h3>This piece has moved on.</h3>
+      <p>
+        We could not find the piece you were looking for. It may have sold out or been
+        retired from the collection.
+      </p>
+      <a class="btn" routerLink="/shop">Explore the collection</a>
+    </div>
+  </div>
+} @else {
+  @if (product(); as product) {
+    <div class="container product">
+      <div class="gallery">
+        <div class="gallery__thumbs">
+          @for (image of product.images; track image.id; let index = $index) {
+            <button
+              type="button"
+              class="gallery__thumb"
+              [class.is-active]="activeImage() === index"
+              (click)="activeImage.set(index)"
+              [attr.aria-label]="'View image ' + (index + 1)"
+            >
+              <img [src]="image.url" [alt]="image.altText || product.name" loading="lazy" />
+            </button>
+          }
+        </div>
+
+        <div class="gallery__main">
+          @if (activeImageUrl(); as url) {
+            <img [src]="url" [alt]="product.images[activeImage()]?.altText || product.name" />
+          } @else {
+            <div class="gallery__placeholder"></div>
+          }
+
+          <div class="gallery__badges">
+            @if (product.compareAtPrice && product.compareAtPrice > product.price) {
+              <span class="badge badge--sale">
+                -{{ discountPercent(product) }}%
+              </span>
+            }
+            @if (product.isFeatured) {
+              <span class="badge badge--new">Atelier favourite</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="info">
+        <p class="eyebrow eyebrow--plain">{{ product.categoryName }}</p>
+        <h1 class="info__title">{{ product.name }}</h1>
+
+        <div class="info__rating">
+          <app-rating-stars
+            [rating]="averageRating()"
+            [count]="reviewCount()"
+            [showCount]="true"
+          />
+          @if (reviewCount() > 0) {
+            <a class="info__reviews-link" href="#reviews">Read reviews</a>
+          }
+        </div>
+
+        <div class="info__price">
+          <span class="info__amount">{{ product.price | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+          @if (product.compareAtPrice && product.compareAtPrice > product.price) {
+            <s>{{ product.compareAtPrice | currency: 'INR' : 'symbol' : '1.0-0' }}</s>
+            <span class="info__save">
+              Save
+              {{ product.compareAtPrice - product.price | currency: 'INR' : 'symbol' : '1.0-0' }}
+            </span>
+          }
+        </div>
+
+        <p class="info__short">{{ product.shortDescription }}</p>
+
+        @if (product.colors.length > 0) {
+          <div class="info__group">
+            <p class="info__label">
+              Colour
+              <span>{{ selectedColor() }}</span>
+            </p>
+            <div class="info__colors">
+              @for (color of product.colors; track color.hex + color.name) {
+                <button
+                  type="button"
+                  class="info__color"
+                  [class.is-active]="selectedColor() === color.name"
+                  (click)="selectColor(color.name)"
+                  [attr.title]="color.name"
+                  [attr.aria-label]="'Colour ' + color.name"
+                >
+                  <i [style.background]="color.hex"></i>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        @if (sizesForColor().length > 0) {
+          <div class="info__group">
+            <p class="info__label">
+              Size
+              <a routerLink="/size-guide" class="info__size-guide">Size guide</a>
+            </p>
+            <div class="info__sizes">
+              @for (size of sizesForColor(); track size.size) {
+                <button
+                  type="button"
+                  class="info__size"
+                  [class.is-active]="selectedSize() === size.size"
+                  [disabled]="!size.inStock"
+                  (click)="selectSize(size.size)"
+                >
+                  {{ size.size }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <p class="info__stock" [class.info__stock--low]="!canAdd()">
+          <app-icon name="package" [size]="14" />
+          {{ stockMessage() }}
+        </p>
+
+        <div class="info__buy">
+          <app-quantity-stepper
+            [value]="quantity()"
+            [max]="maxQuantity()"
+            (valueChange)="quantity.set($event)"
+          />
+          <button
+            type="button"
+            class="btn info__add"
+            [disabled]="!canAdd() || cart.busy()"
+            (click)="addToBag()"
+          >
+            @if (cart.busy()) {
+              Adding…
+            } @else if (!canAdd()) {
+              Sold out
+            } @else {
+              Add to bag
+              <app-icon name="bag" [size]="16" />
+            }
+          </button>
+          <button
+            type="button"
+            class="info__wishlist"
+            [class.is-saved]="saved()"
+            (click)="toggleWishlist()"
+            [attr.aria-label]="saved() ? 'Remove from wishlist' : 'Save to wishlist'"
+          >
+            <app-icon name="heart" [size]="19" />
+          </button>
+        </div>
+
+        <ul class="info__assurances">
+          <li>
+            <app-icon name="truck" [size]="16" />
+            Complimentary shipping over ₹1,999
+          </li>
+          <li>
+            <app-icon name="refresh" [size]="16" />
+            Easy 7-day returns
+          </li>
+          <li>
+            <app-icon name="shield" [size]="16" />
+            Cash on delivery checkout
+          </li>
+        </ul>
+
+        <div class="accordion">
+          <div class="accordion__tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              [class.is-active]="activeTab() === 'details'"
+              [attr.aria-selected]="activeTab() === 'details'"
+              (click)="setTab('details')"
+            >
+              Details
+            </button>
+            <button
+              type="button"
+              role="tab"
+              [class.is-active]="activeTab() === 'care'"
+              [attr.aria-selected]="activeTab() === 'care'"
+              (click)="setTab('care')"
+            >
+              Fabric &amp; care
+            </button>
+            <button
+              type="button"
+              role="tab"
+              [class.is-active]="activeTab() === 'shipping'"
+              [attr.aria-selected]="activeTab() === 'shipping'"
+              (click)="setTab('shipping')"
+            >
+              Shipping &amp; returns
+            </button>
+          </div>
+
+          <div class="accordion__panel">
+            @switch (activeTab()) {
+              @case ('details') {
+                <p>{{ product.description }}</p>
+                <dl class="info__specs">
+                  <div>
+                    <dt>Fabric</dt>
+                    <dd>{{ product.fabric }}</dd>
+                  </div>
+                  <div>
+                    <dt>Collection</dt>
+                    <dd>{{ product.categoryName }}</dd>
+                  </div>
+                  <div>
+                    <dt>Reference</dt>
+                    <dd>{{ selectedVariant()?.sku ?? '—' }}</dd>
+                  </div>
+                </dl>
+              }
+              @case ('care') {
+                <p>
+                  {{ product.careInstructions || 'Gentle machine wash cold. Line dry in shade. Warm iron if needed.' }}
+                </p>
+                <p class="info__care-note">
+                  Our fabrics are chosen to soften with wear. Wash with like colours and
+                  avoid tumble drying to keep the drape and finish at their best.
+                </p>
+              }
+              @case ('shipping') {
+                <p>
+                  Complimentary standard shipping on orders over ₹1,999, otherwise a flat
+                  ₹99. Express delivery is available at checkout for ₹249. Orders are dispatched
+                  from our Hyderabad atelier within one to two working days.
+                </p>
+                <p class="info__care-note">
+                  Payment is cash on delivery only. Unworn pieces may be returned within 7
+                  days of delivery, with tags attached. Final sale and altered pieces are not eligible.
+                </p>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="section section--tight product-story">
+      <div class="container product-story__grid">
+        <div>
+          <p class="eyebrow">Considered in the making</p>
+          <h2>A piece to live in, not save for best.</h2>
+        </div>
+        <div class="product-story__copy">
+          <p>
+            Cut generously for graceful movement and finished with a quiet hand. Every
+            Noor piece begins with fabric chosen for how it breathes, drapes and softens
+            over time.
+          </p>
+          <ul>
+            <li><app-icon name="leaf" [size]="15" /> Breathable, natural fabrics</li>
+            <li><app-icon name="scissors" [size]="15" /> Hand-finished hems</li>
+            <li><app-icon name="sparkle" [size]="15" /> Designed to be worn for years</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reviews" id="reviews">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-head__copy">
+            <p class="eyebrow">In their words</p>
+            <h2>Reviews.</h2>
+          </div>
+          <div class="reviews__summary">
+            <span class="reviews__average">{{ averageRating() | number: '1.1-1' }}</span>
+            <div>
+              <app-rating-stars [rating]="averageRating()" />
+              <p>{{ reviewCount() }} {{ reviewCount() === 1 ? 'review' : 'reviews' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reviews__grid">
+          <div class="reviews__list">
+            @if (reviews().length === 0) {
+              <p class="reviews__empty">
+                No reviews yet. If this piece is yours, we would love to hear how it
+                wears.
+              </p>
+            } @else {
+              @for (review of reviews(); track review.id) {
+                <article class="review">
+                  <div class="review__head">
+                    <div>
+                      <app-rating-stars [rating]="review.rating" />
+                      @if (review.title) {
+                        <h3 class="review__title">{{ review.title }}</h3>
+                      }
+                    </div>
+                    <span class="review__date">{{ review.createdAt | date: 'MMM y' }}</span>
+                  </div>
+                  <p class="review__comment">{{ review.comment }}</p>
+                  <p class="review__author">
+                    {{ review.authorName }}
+                    <span class="badge badge--muted">Verified client</span>
+                  </p>
+                </article>
+              }
+            }
+          </div>
+
+          <aside class="review-form">
+            <h3>Share your thoughts</h3>
+            @if (!isAuthenticated()) {
+              <p class="review-form__note">
+                Sign in to leave a review and help others choose with confidence.
+              </p>
+              <a class="btn btn--block" routerLink="/login" [queryParams]="{ returnUrl: '/product/' + product.slug }">
+                Sign in to review
+              </a>
+            } @else {
+              <form (ngSubmit)="submitReview()" class="form-stack">
+                <div class="field">
+                  <label for="review-rating">Your rating</label>
+                  <select id="review-rating" name="rating" [(ngModel)]="reviewRating">
+                    <option [ngValue]="5">5 — Exceptional</option>
+                    <option [ngValue]="4">4 — Lovely</option>
+                    <option [ngValue]="3">3 — Good</option>
+                    <option [ngValue]="2">2 — Fair</option>
+                    <option [ngValue]="1">1 — Disappointing</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="review-title">Title (optional)</label>
+                  <input
+                    id="review-title"
+                    name="title"
+                    [(ngModel)]="reviewTitle"
+                    placeholder="A short headline"
+                    maxlength="120"
+                  />
+                </div>
+                <div class="field">
+                  <label for="review-comment">Your review</label>
+                  <textarea
+                    id="review-comment"
+                    name="comment"
+                    [(ngModel)]="reviewComment"
+                    placeholder="How does it fit, feel and wear?"
+                    maxlength="2000"
+                    required
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn btn--block" [disabled]="submittingReview()">
+                  {{ submittingReview() ? 'Sharing…' : 'Publish review' }}
+                </button>
+              </form>
+            }
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    @if (product.relatedProducts.length > 0) {
+      <section class="section section--tight related">
+        <div class="container">
+          <div class="section-head">
+            <div class="section-head__copy">
+              <p class="eyebrow">Wear it with</p>
+              <h2>From the same collection.</h2>
+            </div>
+            <a class="section-head__link" routerLink="/shop" [queryParams]="{ category: product.categorySlug }">
+              View {{ product.categoryName }}
+            </a>
+          </div>
+          <div class="product-grid">
+            @for (related of product.relatedProducts; track related.id) {
+              <app-product-card [product]="related" />
+            }
+          </div>
+        </div>
+      </section>
+    }
+  }
+}

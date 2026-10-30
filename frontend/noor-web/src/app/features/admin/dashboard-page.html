@@ -1,0 +1,259 @@
+<header class="admin-head">
+  <div>
+    <p class="eyebrow">Atelier overview</p>
+    <h1>{{ greeting() }}, {{ firstName() }}.</h1>
+    <p class="admin-head__sub">
+      {{ today | date: 'EEEE, d MMMM y' }} · Here is how the atelier is moving today.
+    </p>
+  </div>
+  <div class="admin-head__actions">
+    <a class="btn btn--sm btn--outline" routerLink="/admin/products/new">
+      <app-icon name="plus" [size]="14" />
+      New product
+    </a>
+    <a class="btn btn--sm" routerLink="/admin/orders">
+      View orders
+      <app-icon name="arrow-right" [size]="13" />
+    </a>
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="loading-state"><span class="spinner"></span> Gathering the atelier numbers</div>
+} @else if (failed() || !data()) {
+  <div class="empty-state">
+    <h3>The dashboard could not load.</h3>
+    <p>Check the API connection and try again.</p>
+    <button type="button" class="btn" (click)="load()">Try again</button>
+  </div>
+} @else {
+  @if (data(); as data) {
+    <div class="kpis">
+      <article class="kpi kpi--lead">
+        <div class="kpi__top">
+          <span class="kpi__label">Revenue</span>
+          <app-icon name="percent" [size]="16" />
+        </div>
+        <p class="kpi__value">{{ data.totalRevenue | currency: 'INR' : 'symbol' : '1.0-0' }}</p>
+        <p class="kpi__meta">
+          <strong>{{ data.revenueThisMonth | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+          this month
+        </p>
+      </article>
+
+      <article class="kpi">
+        <div class="kpi__top">
+          <span class="kpi__label">Orders</span>
+          <app-icon name="package" [size]="16" />
+        </div>
+        <p class="kpi__value">{{ data.totalOrders | number }}</p>
+        <p class="kpi__meta">
+          <strong>{{ data.ordersThisMonth | number }}</strong>
+          this month
+        </p>
+      </article>
+
+      <a class="kpi" routerLink="/admin/orders">
+        <div class="kpi__top">
+          <span class="kpi__label">Awaiting attention</span>
+          <app-icon name="clock" [size]="16" />
+        </div>
+        <p class="kpi__value">{{ data.pendingOrders | number }}</p>
+        <p class="kpi__meta">pending orders</p>
+      </a>
+
+      <a class="kpi" routerLink="/admin/customers">
+        <div class="kpi__top">
+          <span class="kpi__label">Clients</span>
+          <app-icon name="users" [size]="16" />
+        </div>
+        <p class="kpi__value">{{ data.totalCustomers | number }}</p>
+        <p class="kpi__meta">in the atelier circle</p>
+      </a>
+    </div>
+
+    <div class="mini-kpis">
+      <a routerLink="/admin/products">
+        <app-icon name="tag" [size]="14" />
+        <span>{{ data.totalProducts }} products</span>
+      </a>
+      <a routerLink="/admin/products">
+        <app-icon name="alert-circle" [size]="14" />
+        <span>{{ data.lowStockCount }} low stock</span>
+      </a>
+      <span>
+        <app-icon name="mail" [size]="14" />
+        <span>{{ data.newsletterSubscribers }} newsletter subscribers</span>
+      </span>
+    </div>
+
+    <div class="dash-grid">
+      <section class="dash-panel dash-panel--chart">
+        <header class="dash-panel__head">
+          <div>
+            <h2>Sales, last 7 days</h2>
+            <p class="dash-panel__sub">Daily revenue across the atelier.</p>
+          </div>
+          <div class="chart-total">
+            <span>7-day revenue</span>
+            <strong>{{ chartTotal() | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+        </header>
+
+        @if (chartBars().length > 0) {
+          <div class="chart">
+            <svg viewBox="0 0 720 200" role="img" aria-label="Daily revenue for the last 7 days">
+              <line x1="0" y1="176" x2="720" y2="176" class="chart__axis" />
+              <line x1="0" y1="116" x2="720" y2="116" class="chart__grid" />
+              <line x1="0" y1="56" x2="720" y2="56" class="chart__grid" />
+              @for (bar of chartBars(); track bar.date) {
+                <g class="chart__bar-group">
+                  <rect
+                    [attr.x]="bar.x"
+                    [attr.y]="bar.y"
+                    [attr.width]="bar.width"
+                    [attr.height]="bar.height"
+                    rx="1"
+                    class="chart__bar"
+                  >
+                    <title>{{ bar.date | date: 'mediumDate' }} · {{ bar.revenue | currency: 'INR' : 'symbol' : '1.0-0' }} · {{ bar.orders }} orders</title>
+                  </rect>
+                </g>
+              }
+              <text x="0" y="196" class="chart__label">7 days ago</text>
+              <text x="720" y="196" class="chart__label chart__label--end">Today</text>
+            </svg>
+          </div>
+        } @else {
+          <p class="muted small">No sales in this window yet.</p>
+        }
+      </section>
+
+      <section class="dash-panel">
+        <header class="dash-panel__head">
+          <div>
+            <h2>Top pieces</h2>
+            <p class="dash-panel__sub">By units sold.</p>
+          </div>
+          <a routerLink="/admin/products" class="section-head__link">All products</a>
+        </header>
+
+        @if (data.topProducts.length === 0) {
+          <p class="muted small">No sales recorded yet.</p>
+        } @else {
+          <ol class="top-products">
+            @for (product of data.topProducts; track product.productId; let index = $index) {
+              <li>
+                <span class="top-products__rank">{{ index + 1 }}</span>
+                <span class="top-products__media">
+                  @if (product.imageUrl) {
+                    <img [src]="product.imageUrl" [alt]="product.name" />
+                  }
+                </span>
+                <div class="top-products__info">
+                  <p class="top-products__name">{{ product.name }}</p>
+                  <div class="top-products__bar">
+                    <span [style.width.%]="(product.unitsSold / topProductMax()) * 100"></span>
+                  </div>
+                  <p class="top-products__meta">{{ product.unitsSold }} sold</p>
+                </div>
+                <span class="top-products__revenue">
+                  {{ product.revenue | currency: 'INR' : 'symbol' : '1.0-0' }}
+                </span>
+              </li>
+            }
+          </ol>
+        }
+      </section>
+    </div>
+
+    <div class="dash-grid dash-grid--lower">
+      <section class="dash-panel">
+        <header class="dash-panel__head">
+          <div>
+            <h2>Recent orders</h2>
+            <p class="dash-panel__sub">The latest five from the storefront.</p>
+          </div>
+          <a routerLink="/admin/orders" class="section-head__link">All orders</a>
+        </header>
+
+        @if (data.recentOrders.length === 0) {
+          <p class="muted small">No orders yet.</p>
+        } @else {
+          <div class="table-wrap dash-table">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Date</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (order of data.recentOrders; track order.id) {
+                  <tr>
+                    <td>
+                      <a class="order-link" [routerLink]="['/admin/orders', order.id]">
+                        {{ order.orderNumber }}
+                      </a>
+                      <span class="order-items">{{ order.itemCount }} items</span>
+                    </td>
+                    <td>{{ order.createdAt | date: 'MMM d, y' }}</td>
+                    <td>{{ order.total | currency: 'INR' : 'symbol' : '1.0-0' }}</td>
+                    <td>
+                      <span class="status status--{{ order.paymentStatus === 'Paid' ? 'paid' : 'unpaid' }}">
+                        {{ order.paymentStatus }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="status {{ statusClass(order.status) }}">{{ order.status }}</span>
+                    </td>
+                    <td class="cell-action">
+                      <a [routerLink]="['/admin/orders', order.id]" aria-label="View order">
+                        <app-icon name="chevron-right" [size]="14" />
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+
+      <section class="dash-panel">
+        <header class="dash-panel__head">
+          <div>
+            <h2>Low stock</h2>
+            <p class="dash-panel__sub">Variants with five or fewer.</p>
+          </div>
+          <a routerLink="/admin/products" class="section-head__link">Manage</a>
+        </header>
+
+        @if (data.lowStockVariants.length === 0) {
+          <p class="muted small">Every variant is comfortably in stock.</p>
+        } @else {
+          <ul class="low-stock">
+            @for (item of data.lowStockVariants; track item.variantId) {
+              <li [class.is-out]="item.stockQuantity === 0">
+                <div>
+                  <p class="low-stock__name">{{ item.productName }}</p>
+                  <p class="low-stock__meta">{{ item.colorName }} · {{ item.size }} · {{ item.sku }}</p>
+                </div>
+                <span class="low-stock__qty">
+                  {{ item.stockQuantity === 0 ? 'Out' : item.stockQuantity }}
+                </span>
+              </li>
+            }
+          </ul>
+          <a class="btn btn--sm btn--outline btn--block mt-16" routerLink="/admin/products">
+            Review inventory
+          </a>
+        }
+      </section>
+    </div>
+  }
+}

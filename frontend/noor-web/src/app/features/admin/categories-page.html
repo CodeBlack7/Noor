@@ -1,0 +1,221 @@
+<header class="admin-page-head">
+  <div>
+    <p class="eyebrow">Catalogue</p>
+    <h1>Collections</h1>
+    <p class="admin-page-sub">
+      The edits that group the catalogue — burqas, abayas, hijabs, and beyond.
+    </p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn--sm btn--outline" routerLink="/shop">
+      <app-icon name="external-link" [size]="13" />
+      View shop
+    </a>
+    <button type="button" class="btn btn--sm" (click)="startCreate()">
+      <app-icon name="plus" [size]="14" />
+      New collection
+    </button>
+  </div>
+</header>
+
+@if (editorOpen()) {
+  <form class="admin-panel category-editor" (ngSubmit)="save()" novalidate>
+    <div class="admin-panel__head">
+      <div>
+        <h2>{{ editingId() ? 'Edit collection' : 'New collection' }}</h2>
+        <p class="admin-panel__sub">
+          A collection groups pieces in the shop navigation and filters.
+        </p>
+      </div>
+      <button type="button" class="icon-btn" (click)="cancelEditor()" aria-label="Close editor">
+        <app-icon name="close" [size]="17" />
+      </button>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="categoryName">Name</label>
+        <input
+          id="categoryName"
+          name="categoryName"
+          [(ngModel)]="form.name"
+          placeholder="The Everyday"
+          required
+        />
+      </div>
+      <div class="field">
+        <label for="categorySlug">URL slug</label>
+        <input
+          id="categorySlug"
+          name="categorySlug"
+          [(ngModel)]="form.slug"
+          placeholder="generated-from-the-name"
+        />
+        <p class="field-hint">Leave empty to generate from the name.</p>
+      </div>
+
+      <div class="field span-2">
+        <label for="categoryImage">Cover image URL</label>
+        <input
+          id="categoryImage"
+          name="categoryImage"
+          [(ngModel)]="form.imageUrl"
+          placeholder="/images/categories/everyday.svg"
+        />
+      </div>
+
+      <div class="field span-2">
+        <label for="categoryDescription">Description</label>
+        <textarea
+          id="categoryDescription"
+          name="categoryDescription"
+          [(ngModel)]="form.description"
+          rows="3"
+          placeholder="A sentence that sets the mood of this edit."
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="categorySort">Sort order</label>
+        <input
+          id="categorySort"
+          name="categorySort"
+          type="number"
+          min="0"
+          [(ngModel)]="form.sortOrder"
+        />
+        <p class="field-hint">Lower numbers appear first in navigation.</p>
+      </div>
+
+      <label class="checkbox category-editor__active">
+        <input type="checkbox" name="categoryActive" [(ngModel)]="form.isActive" />
+        Show this collection on the storefront
+      </label>
+    </div>
+
+    @if (form.imageUrl) {
+      <div class="category-preview">
+        <img [src]="form.imageUrl" alt="Collection cover preview" />
+        <span>Cover preview</span>
+      </div>
+    }
+
+    <div class="category-editor__actions">
+      <button type="submit" class="btn" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : editingId() ? 'Save collection' : 'Create collection' }}
+      </button>
+      <button type="button" class="btn btn--ghost" (click)="cancelEditor()">Cancel</button>
+    </div>
+  </form>
+}
+
+@if (loading()) {
+  <div class="loading-state"><span class="spinner"></span> Loading collections</div>
+} @else if (failed()) {
+  <div class="admin-empty">
+    <p>Collections could not load.</p>
+    <button type="button" class="btn btn--sm btn--outline mt-16" (click)="load()">
+      Try again
+    </button>
+  </div>
+} @else if (categories().length === 0) {
+  <div class="admin-empty">
+    <p>No collections yet.</p>
+    <button type="button" class="btn btn--sm mt-16" (click)="startCreate()">
+      Create the first collection
+    </button>
+  </div>
+} @else {
+  <div class="panel admin-panel--flush table-wrap">
+    <table class="data-table category-table">
+      <thead>
+        <tr>
+          <th>Collection</th>
+          <th>Description</th>
+          <th>Products</th>
+          <th>Order</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (category of categories(); track category.id) {
+          <tr>
+            <td>
+              <div class="category-cell">
+                <span class="category-cell__media">
+                  @if (category.imageUrl) {
+                    <img [src]="category.imageUrl" [alt]="category.name" loading="lazy" />
+                  } @else {
+                    <app-icon name="image" [size]="16" />
+                  }
+                </span>
+                <div class="category-cell__info">
+                  <a
+                    class="category-cell__name"
+                    [routerLink]="['/shop']"
+                    [queryParams]="{ category: category.slug }"
+                  >
+                    {{ category.name }}
+                  </a>
+                  <p class="category-cell__slug">/{{ category.slug }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="category-description">
+              {{ category.description || '—' }}
+            </td>
+            <td>
+              <a
+                class="category-count"
+                routerLink="/admin/products"
+              >
+                {{ category.productCount }}
+              </a>
+            </td>
+            <td>{{ category.sortOrder }}</td>
+            <td>
+              <span class="status {{ category.isActive ? 'status--active' : 'status--inactive' }}">
+                {{ category.isActive ? 'Visible' : 'Hidden' }}
+              </span>
+            </td>
+            <td class="cell-actions">
+              <div class="admin-cell-actions">
+                <a
+                  class="admin-icon-btn"
+                  [routerLink]="['/shop']"
+                  [queryParams]="{ category: category.slug }"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="View collection on storefront"
+                  title="View on storefront"
+                >
+                  <app-icon name="external-link" [size]="14" />
+                </a>
+                <button
+                  type="button"
+                  class="admin-icon-btn"
+                  (click)="startEdit(category)"
+                  aria-label="Edit collection"
+                  title="Edit collection"
+                >
+                  <app-icon name="edit" [size]="14" />
+                </button>
+                <button
+                  type="button"
+                  class="admin-icon-btn is-danger"
+                  [disabled]="deletingId() === category.id"
+                  (click)="remove(category)"
+                  aria-label="Delete collection"
+                  title="Delete collection"
+                >
+                  <app-icon name="trash" [size]="14" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

@@ -1,0 +1,522 @@
+<div class="container">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span>
+      @switch (page()) {
+        @case ('story') { Our story }
+        @case ('contact') { Contact }
+        @case ('shipping') { Shipping &amp; returns }
+        @case ('sizes') { Size guide }
+      }
+    </span>
+  </nav>
+</div>
+
+@switch (page()) {
+  @case ('story') {
+    <header class="info-hero">
+      <div class="container info-hero__inner">
+        <p class="eyebrow">The maison</p>
+        <h1>Made slowly.<br /><em>Worn often.</em></h1>
+        <p class="lead">
+          Noor is a modest atelier built on a simple belief: clothing should feel like a
+          deep breath — beautiful, generous, and quiet enough to live in every day.
+        </p>
+      </div>
+    </header>
+
+    <section class="story-split">
+      <div class="story-split__media">
+        <img src="assets/craft.svg" alt="A close study of Noor fabric and finish" />
+      </div>
+      <div class="story-split__copy">
+        <p class="eyebrow">How it began</p>
+        <h2>A frustration, then a collection.</h2>
+        <p>
+          Noor began in a small Hyderabad studio with a frustration familiar to many:
+          modest wear that felt either too plain to love or too precious to wear. We
+          wanted pieces that could go from school drop-off to work to a wedding — and
+          feel right in every room.
+        </p>
+        <p>
+          So we started with fabric. Crepes that breathe. Linens washed until they soften
+          like an old favourite. Jerseys that hold their shape through a long day. Then
+          we cut generously, finished by hand, and kept the details quiet.
+        </p>
+        <p class="story-split__signature">— The Noor atelier</p>
+      </div>
+    </section>
+
+    <section class="section section--tint">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-head__copy">
+            <p class="eyebrow">What we hold to</p>
+            <h2>Four quiet promises.</h2>
+          </div>
+        </div>
+
+        <div class="values-grid">
+          <article class="value-card">
+            <span class="value-card__no">01</span>
+            <app-icon name="leaf" [size]="22" />
+            <h3>Fabric first</h3>
+            <p>
+              Natural fibres chosen for how they breathe, drape, and soften with wear —
+              never for how they photograph.
+            </p>
+          </article>
+          <article class="value-card">
+            <span class="value-card__no">02</span>
+            <app-icon name="scissors" [size]="22" />
+            <h3>Cut generously</h3>
+            <p>
+              Room to move, layer, and live. Our silhouettes are considered for real
+              days, not just still photographs.
+            </p>
+          </article>
+          <article class="value-card">
+            <span class="value-card__no">03</span>
+            <app-icon name="shield" [size]="22" />
+            <h3>Made to last</h3>
+            <p>
+              Reinforced seams, checked hems, and finishes that survive the wash. Pieces
+              meant for years, not seasons.
+            </p>
+          </article>
+          <article class="value-card">
+            <span class="value-card__no">04</span>
+            <app-icon name="sparkle" [size]="22" />
+            <h3>Quietly beautiful</h3>
+            <p>
+              Considered details, never decoration for its own sake. Luxury that whispers
+              rather than announces.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-head__copy">
+            <p class="eyebrow">The atelier</p>
+            <h2>A small team, close to the cloth.</h2>
+          </div>
+        </div>
+        <div class="atelier-grid">
+          <div class="atelier-grid__copy">
+            <p>
+              Every Noor piece passes through a small team of pattern cutters, sewers,
+              and finishers. We work in short runs, check every hem by hand, and keep
+              production close enough that we can walk the floor ourselves.
+            </p>
+            <p>
+              Our fabrics are sourced from mills we know by name. Where we can, we choose
+              lower-impact fibres and natural dyes — and we keep packaging simple,
+              recyclable, and free of plastic.
+            </p>
+            <ul class="atelier-list">
+              <li><app-icon name="check" [size]="14" /> Short, considered production runs</li>
+              <li><app-icon name="check" [size]="14" /> Hand-checked hems and finishes</li>
+              <li><app-icon name="check" [size]="14" /> Recyclable, plastic-free packaging</li>
+              <li><app-icon name="check" [size]="14" /> Repairs and alterations on request</li>
+            </ul>
+          </div>
+          <div class="atelier-grid__media">
+            <img src="assets/story.svg" alt="Fabric study in warm sand and espresso" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="info-cta">
+      <div class="container info-cta__inner">
+        <div>
+          <p class="eyebrow">Come inside</p>
+          <h2>Find the piece you will reach for.</h2>
+        </div>
+        <a class="btn btn--light" routerLink="/shop">
+          Shop the collection
+          <app-icon name="arrow-right" [size]="14" />
+        </a>
+      </div>
+    </section>
+  }
+
+  @case ('contact') {
+    <header class="info-hero info-hero--compact">
+      <div class="container info-hero__inner">
+        <p class="eyebrow">Client care</p>
+        <h1>We are here to help.</h1>
+        <p class="lead">
+          Questions about a piece, a fit, or an order? Write to us and a real person will
+          reply within one business day.
+        </p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container contact-grid">
+        <div class="contact-details">
+          <h2>Reach the atelier</h2>
+
+          <div class="contact-item">
+            <app-icon name="mail" [size]="18" />
+            <div>
+              <p class="contact-item__label">Email</p>
+              <a href="mailto:care@noor.store">care@noor.store</a>
+              <p class="contact-item__note">Replies within one business day.</p>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <app-icon name="phone" [size]="18" />
+            <div>
+              <p class="contact-item__label">Telephone</p>
+              <a href="tel:+919849014820">+91 98490 14820</a>
+              <p class="contact-item__note">Monday–Saturday, 10am–6pm IST.</p>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <app-icon name="map-pin" [size]="18" />
+            <div>
+              <p class="contact-item__label">Atelier</p>
+              <p>12 Banjara Hills Road No. 3<br />Hyderabad, Telangana 500034</p>
+              <p class="contact-item__note">Visits by appointment only.</p>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <app-icon name="clock" [size]="18" />
+            <div>
+              <p class="contact-item__label">Order support</p>
+              <p>Track any order from your account.</p>
+              <a routerLink="/account/orders">Go to your orders</a>
+            </div>
+          </div>
+
+          <div class="contact-faq">
+            <h3>Quick answers</h3>
+            <p>
+              Shipping is complimentary over ₹1,999 and returns are accepted within 7
+              days. Find the details on our
+              <a routerLink="/shipping-returns">shipping &amp; returns page</a>, or check
+              the <a routerLink="/size-guide">size guide</a> before you choose.
+            </p>
+          </div>
+        </div>
+
+        <div class="panel contact-form">
+          <h2>Send a note</h2>
+          <p class="contact-form__intro">
+            Tell us what you need. Include your order number if your question is about an
+            existing order.
+          </p>
+
+          @if (sent()) {
+            <div class="contact-form__success">
+              <app-icon name="check-circle" [size]="17" />
+              <p>Thank you — your note is with client care. We will reply shortly.</p>
+            </div>
+          }
+
+          <form class="form-stack" (ngSubmit)="submitContact()" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label for="contactName">Your name</label>
+                <input id="contactName" name="contactName" [(ngModel)]="contact.name" required />
+              </div>
+              <div class="field">
+                <label for="contactEmail">Email</label>
+                <input
+                  id="contactEmail"
+                  type="email"
+                  name="contactEmail"
+                  [(ngModel)]="contact.email"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="contactSubject">Subject</label>
+              <select id="contactSubject" name="contactSubject" [(ngModel)]="contact.subject">
+                <option>A question about a piece</option>
+                <option>Order or delivery</option>
+                <option>Returns or exchanges</option>
+                <option>Sizing and fit</option>
+                <option>Press or wholesale</option>
+                <option>Something else</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="contactMessage">Message</label>
+              <textarea
+                id="contactMessage"
+                name="contactMessage"
+                [(ngModel)]="contact.message"
+                rows="6"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn">Send your note</button>
+            <p class="contact-form__privacy">
+              We only use your details to reply to this note.
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+  }
+
+  @case ('shipping') {
+    <header class="info-hero info-hero--compact">
+      <div class="container info-hero__inner">
+        <p class="eyebrow">Client care</p>
+        <h1>Shipping &amp; returns.</h1>
+        <p class="lead">
+          Considered delivery, and an easy way back if a piece is not quite right.
+        </p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container policy">
+        <aside class="policy__nav">
+          <p class="eyebrow eyebrow--plain">On this page</p>
+          <a href="#delivery">Delivery</a>
+          <a href="#payment">Payment</a>
+          <a href="#returns">Returns &amp; exchanges</a>
+          <a href="#care">Care &amp; repairs</a>
+          <a href="#questions">Questions</a>
+        </aside>
+
+        <div class="policy__body">
+          <section id="delivery">
+            <h2>Delivery</h2>
+            <p>
+              Orders are prepared in our Hyderabad atelier and dispatched within one to two
+              working days. You will receive a confirmation when your order is placed,
+              and tracking details when it leaves us.
+            </p>
+
+            <div class="table-wrap mt-24">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Delivery time</th>
+                    <th>Cost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Standard</td>
+                    <td>3–5 working days</td>
+                    <td>₹99 · complimentary over ₹1,999</td>
+                  </tr>
+                  <tr>
+                    <td>Express</td>
+                    <td>1–2 working days</td>
+                    <td>₹249</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="policy__note">
+              We currently deliver within India only. For delivery questions, write to
+              <a href="mailto:care@noor.store">care@noor.store</a>.
+            </p>
+          </section>
+
+          <section id="payment">
+            <h2>Payment</h2>
+            <p>
+              Cash on delivery is the only payment method available. You pay in cash when
+              your order arrives, and we never ask for card, UPI, or netbanking details.
+            </p>
+            <p class="policy__note">
+              Online payments are intentionally disabled until a secure payment partner is
+              integrated. Please do not send payment details by email or message.
+            </p>
+          </section>
+
+          <section id="returns">
+            <h2>Returns &amp; exchanges</h2>
+            <p>
+              Unworn pieces may be returned within 7 days of delivery, with tags attached
+              and in their original packaging. Final sale and altered pieces are not eligible.
+            </p>
+            <ul class="policy__list">
+              <li>Start a return from your account, or write to client care.</li>
+              <li>We will arrange a pickup for eligible domestic orders.</li>
+              <li>Refunds for cash-on-delivery orders are issued by bank transfer within 5–7 working days of receipt.</li>
+              <li>Exchanges are subject to stock; we are happy to help you find an alternative.</li>
+            </ul>
+            <a class="btn btn--outline" routerLink="/account/orders">Start a return</a>
+          </section>
+
+          <section id="care">
+            <h2>Care &amp; repairs</h2>
+            <p>
+              Our fabrics are chosen to soften with wear. Wash with like colours in cold
+              water, line dry in shade, and avoid tumble drying to preserve drape and
+              finish. Each piece arrives with a care card specific to its cloth.
+            </p>
+            <p>
+              If a seam or finish needs attention, write to us. We keep a small repairs
+              bench and will do what we can to give your piece a longer life.
+            </p>
+          </section>
+
+          <section id="questions">
+            <h2>Questions</h2>
+            <p>
+              Client care is available Monday–Saturday, 10am–6pm IST, at
+              <a href="mailto:care@noor.store">care@noor.store</a> or
+              <a href="tel:+919849014820">+91 98490 14820</a>.
+            </p>
+            <a class="btn" routerLink="/contact">Contact client care</a>
+          </section>
+        </div>
+      </div>
+    </section>
+  }
+
+  @case ('sizes') {
+    <header class="info-hero info-hero--compact">
+      <div class="container info-hero__inner">
+        <p class="eyebrow">Fit &amp; measurements</p>
+        <h1>Size guide.</h1>
+        <p class="lead">
+          Our pieces are cut generously for graceful movement. Use the guide below, and
+          write to us if you would like a personal fit recommendation.
+        </p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container sizes">
+        <div class="sizes__measure">
+          <h2>How to measure</h2>
+          <ol class="measure-list">
+            <li>
+              <span>01</span>
+              <div>
+                <strong>Bust</strong>
+                <p>Measure around the fullest part, keeping the tape level and relaxed.</p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <strong>Waist</strong>
+                <p>Measure around your natural waist, without pulling the tape tight.</p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <strong>Hip</strong>
+                <p>Measure around the fullest part of your hips, feet together.</p>
+              </div>
+            </li>
+            <li>
+              <span>04</span>
+              <div>
+                <strong>Length</strong>
+                <p>Measure from the shoulder to where you would like the hem to fall.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="sizes__table">
+          <h2>Women's sizing</h2>
+          <p class="muted small">Measurements in centimetres (cm). Our styles are cut with ease.</p>
+
+          <div class="table-wrap mt-24">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Size</th>
+                  <th>Bust</th>
+                  <th>Waist</th>
+                  <th>Hip</th>
+                  <th>Length</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>XS</td>
+                  <td>81–86</td>
+                  <td>64–69</td>
+                  <td>86–91</td>
+                  <td>137</td>
+                </tr>
+                <tr>
+                  <td>S</td>
+                  <td>86–91</td>
+                  <td>69–74</td>
+                  <td>91–97</td>
+                  <td>140</td>
+                </tr>
+                <tr>
+                  <td>M</td>
+                  <td>91–97</td>
+                  <td>74–79</td>
+                  <td>97–102</td>
+                  <td>142</td>
+                </tr>
+                <tr>
+                  <td>L</td>
+                  <td>97–104</td>
+                  <td>79–86</td>
+                  <td>102–109</td>
+                  <td>145</td>
+                </tr>
+                <tr>
+                  <td>XL</td>
+                  <td>104–112</td>
+                  <td>86–94</td>
+                  <td>109–117</td>
+                  <td>147</td>
+                </tr>
+                <tr>
+                  <td>XXL</td>
+                  <td>112–119</td>
+                  <td>94–102</td>
+                  <td>117–124</td>
+                  <td>150</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="size-notes">
+            <div>
+              <app-icon name="info" [size]="17" />
+              <p>
+                Between sizes? Our burqas and abayas are intentionally generous. Choose
+                the smaller size for a closer drape, or the larger for more ease.
+              </p>
+            </div>
+            <div>
+              <app-icon name="scissors" [size]="17" />
+              <p>
+                Need a length adjustment? We offer alterations on selected pieces. Write
+                to client care with your order number.
+              </p>
+            </div>
+          </div>
+
+          <a class="btn btn--outline" routerLink="/contact">Ask for a fit recommendation</a>
+        </div>
+      </div>
+    </section>
+  }
+}

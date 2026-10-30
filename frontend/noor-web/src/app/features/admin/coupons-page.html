@@ -1,0 +1,252 @@
+<header class="admin-page-head">
+  <div>
+    <p class="eyebrow">The invitation list</p>
+    <h1>Coupons</h1>
+    <p class="admin-page-sub">
+      Offers for the atelier — welcome gifts, seasonal edits, and private codes.
+      {{ coupons().length }} in total.
+    </p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn--sm btn--outline" routerLink="/admin/customers">
+      <app-icon name="users" [size]="13" />
+      Customers
+    </a>
+    <button type="button" class="btn btn--sm" (click)="startCreate()">
+      <app-icon name="plus" [size]="14" />
+      New coupon
+    </button>
+  </div>
+</header>
+
+@if (editorOpen()) {
+  <form class="admin-panel coupon-editor" (ngSubmit)="save()" novalidate>
+    <div class="admin-panel__head">
+      <div>
+        <h2>{{ editingId() ? 'Edit coupon' : 'New coupon' }}</h2>
+        <p class="admin-panel__sub">
+          Codes are upper-cased automatically. Leave the schedule empty for an always-on offer.
+        </p>
+      </div>
+      <button type="button" class="icon-btn" (click)="cancelEditor()" aria-label="Close editor">
+        <app-icon name="close" [size]="17" />
+      </button>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="couponCode">Code</label>
+        <input
+          id="couponCode"
+          name="couponCode"
+          [(ngModel)]="form.code"
+          placeholder="WELCOME10"
+          maxlength="32"
+          autocomplete="off"
+          required
+        />
+        <p class="field-hint">3–32 letters, numbers, hyphens, or underscores.</p>
+      </div>
+
+      <div class="field">
+        <label for="couponDescription">Description</label>
+        <input
+          id="couponDescription"
+          name="couponDescription"
+          [(ngModel)]="form.description"
+          placeholder="Welcome offer for new clients"
+          maxlength="200"
+        />
+      </div>
+
+      <div class="field">
+        <label for="couponType">Discount type</label>
+        <select id="couponType" name="couponType" [(ngModel)]="form.discountType">
+          @for (type of discountTypes; track type) {
+            <option [value]="type">
+              {{ type === 'Percentage' ? 'Percentage off' : 'Fixed amount off' }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="couponValue">
+          {{ form.discountType === 'Percentage' ? 'Value (%)' : 'Value (INR)' }}
+        </label>
+        <input
+          id="couponValue"
+          name="couponValue"
+          type="number"
+          min="0.01"
+          step="0.01"
+          [(ngModel)]="form.value"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label for="couponMin">Minimum order (INR)</label>
+        <input
+          id="couponMin"
+          name="couponMin"
+          type="number"
+          min="0"
+          step="0.01"
+          [(ngModel)]="form.minOrderAmount"
+        />
+        <p class="field-hint">Use 0 for no minimum.</p>
+      </div>
+
+      <div class="field">
+        <label for="couponMax">Maximum redemptions</label>
+        <input
+          id="couponMax"
+          name="couponMax"
+          type="number"
+          min="1"
+          step="1"
+          [(ngModel)]="form.maxRedemptions"
+          placeholder="Unlimited"
+        />
+        <p class="field-hint">Leave empty for unlimited use.</p>
+      </div>
+
+      <div class="field">
+        <label for="couponStarts">Starts at</label>
+        <input
+          id="couponStarts"
+          name="couponStarts"
+          type="datetime-local"
+          [(ngModel)]="form.startsAt"
+        />
+      </div>
+
+      <div class="field">
+        <label for="couponEnds">Ends at</label>
+        <input
+          id="couponEnds"
+          name="couponEnds"
+          type="datetime-local"
+          [(ngModel)]="form.endsAt"
+        />
+      </div>
+
+      <label class="checkbox span-2">
+        <input type="checkbox" name="couponActive" [(ngModel)]="form.isActive" />
+        Active — clients can redeem this code in its window
+      </label>
+    </div>
+
+    <div class="coupon-editor__actions">
+      <button type="submit" class="btn" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : editingId() ? 'Save coupon' : 'Create coupon' }}
+      </button>
+      <button type="button" class="btn btn--ghost" (click)="cancelEditor()">Cancel</button>
+      <span class="coupon-editor__hint">Schedule times use your local timezone.</span>
+    </div>
+  </form>
+}
+
+@if (loading()) {
+  <div class="loading-state"><span class="spinner"></span> Loading the coupon list</div>
+} @else if (failed()) {
+  <div class="admin-empty">
+    <p>Coupons could not load.</p>
+    <button type="button" class="btn btn--sm btn--outline mt-16" (click)="load()">
+      Try again
+    </button>
+  </div>
+} @else if (coupons().length === 0) {
+  <div class="admin-empty">
+    <p>No coupons yet. Create the first invitation.</p>
+    <button type="button" class="btn btn--sm mt-16" (click)="startCreate()">
+      Create a coupon
+    </button>
+  </div>
+} @else {
+  <div class="panel admin-panel--flush table-wrap">
+    <table class="data-table coupon-table">
+      <thead>
+        <tr>
+          <th>Coupon</th>
+          <th>Discount</th>
+          <th>Minimum</th>
+          <th>Redeemed</th>
+          <th>Schedule</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (coupon of coupons(); track coupon.id) {
+          <tr>
+            <td>
+              <div class="coupon-cell">
+                <span class="coupon-cell__code">{{ coupon.code }}</span>
+                <p class="coupon-cell__description">{{ coupon.description || 'No description' }}</p>
+              </div>
+            </td>
+            <td class="cell-nowrap cell-discount">{{ discountLabel(coupon) }}</td>
+            <td class="cell-nowrap">
+              @if (coupon.minOrderAmount > 0) {
+                {{ coupon.minOrderAmount | currency: 'INR' : 'symbol' : '1.0-0' }}
+              } @else {
+                <span class="cell-muted">None</span>
+              }
+            </td>
+            <td class="cell-nowrap">
+              {{ coupon.timesRedeemed }}
+              @if (coupon.maxRedemptions) {
+                <span class="cell-muted">/ {{ coupon.maxRedemptions }}</span>
+              } @else {
+                <span class="cell-muted">/ ∞</span>
+              }
+            </td>
+            <td class="cell-nowrap coupon-window">
+              @if (coupon.startsAt || coupon.endsAt) {
+                {{ coupon.startsAt ? (coupon.startsAt | date: 'MMM d, y') : 'Now' }}
+                <span class="coupon-window__sep">→</span>
+                {{ coupon.endsAt ? (coupon.endsAt | date: 'MMM d, y') : 'Open' }}
+              } @else {
+                <span class="cell-muted">Always on</span>
+              }
+            </td>
+            <td>
+              <span class="coupon-state coupon-state--{{ stateOf(coupon) }}">
+                {{ stateLabel(coupon) }}
+              </span>
+            </td>
+            <td class="cell-actions">
+              <div class="admin-cell-actions">
+                <button
+                  type="button"
+                  class="admin-icon-btn"
+                  (click)="startEdit(coupon)"
+                  aria-label="Edit coupon"
+                  title="Edit coupon"
+                >
+                  <app-icon name="edit" [size]="14" />
+                </button>
+                <button
+                  type="button"
+                  class="admin-icon-btn is-danger"
+                  [disabled]="deletingId() === coupon.id"
+                  (click)="remove(coupon)"
+                  aria-label="Delete coupon"
+                  title="Delete coupon"
+                >
+                  @if (deletingId() === coupon.id) {
+                    <span class="spinner spinner--sm"></span>
+                  } @else {
+                    <app-icon name="trash" [size]="14" />
+                  }
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

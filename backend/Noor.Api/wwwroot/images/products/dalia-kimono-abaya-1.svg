@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eee4d4"/><stop offset="1" stop-color="#d8c6ad"/>
+    </linearGradient>
+    <linearGradient id="fabric1" x1="0.1" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#957a62"/><stop offset="0.45" stop-color="#6f5847"/><stop offset="1" stop-color="#3d2f25"/>
+    </linearGradient>
+    <linearGradient id="veil1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#957a62" stop-opacity="0.72"/><stop offset="1" stop-color="#6f5847" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="grain1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg1)"/>
+  
+  <circle cx="652" cy="196" r="118" fill="#a56f48" opacity="0.13"/>
+  <circle cx="652" cy="196" r="88" fill="none" stroke="#a56f48" stroke-opacity="0.22" stroke-width="1"/>
+  <path d="M160 858 L160 420 A 240 240 0 0 1 640 420 L640 858" fill="none" stroke="#cbb69d" stroke-opacity="0.75" stroke-width="1.2"/>
+  <path d="M140 858 L140 412 A 260 260 0 0 1 660 412 L660 858" fill="none" stroke="#a56f48" stroke-opacity="0.15" stroke-width="1"/>
+  
+    <g opacity="0.97">
+      <path d="M400 240 C 330 248 294 310 296 378 L 304 456 C 280 522 262 620 258 716 L 244 836 L 556 836 L 542 716 C 538 620 520 522 496 456 L 504 378 C 506 310 470 248 400 240 Z" fill="url(#fabric1)"/>
+      <path d="M400 240 C 330 248 294 310 296 378 L 304 456 L 496 456 L 504 378 C 506 310 470 248 400 240 Z" fill="url(#fabric1)"/>
+       <path d="M400 272 C 352 278 328 322 330 370 C 362 388 438 388 470 370 C 472 322 448 278 400 272 Z" fill="#3d2f25" opacity="0.28"/>
+      <path d="M300 500 C 260 592 248 704 246 810" fill="none" stroke="#cbb69d" stroke-opacity="0.18" stroke-width="2"/>
+      <path d="M500 500 C 540 592 552 704 554 810" fill="none" stroke="#cbb69d" stroke-opacity="0.14" stroke-width="2"/>
+      <path d="M334 636 C 368 654 432 654 466 636" fill="none" stroke="#cbb69d" stroke-opacity="0.16" stroke-width="2"/>
+      <path d="M318 744 C 368 764 432 764 482 744" fill="none" stroke="#cbb69d" stroke-opacity="0.12" stroke-width="2"/>
+    </g>
+  <rect width="800" height="1000" filter="url(#grain1)" opacity="0.045"/>
+  
+  <g fill="#3d2f25">
+    <text x="58" y="78" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="7">NOOR</text>
+    <text x="58" y="101" font-family="Arial, sans-serif" font-size="8" letter-spacing="3" opacity="0.58">MODEST ATELIER</text>
+    <text x="58" y="918" font-family="Arial, sans-serif" font-size="9" letter-spacing="4" opacity="0.6">abayas</text>
+    <text x="58" y="955" font-family="Georgia, 'Times New Roman', serif" font-size="29">Dalia Kimono Abaya</text>
+    <text x="742" y="955" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="15" opacity="0.7">N° 01</text>
+    <line x1="58" y1="882" x2="742" y2="882" stroke="#3d2f25" stroke-opacity="0.18" stroke-width="1"/>
+  </g>
+</svg>

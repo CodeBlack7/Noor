@@ -1,0 +1,176 @@
+<header class="admin-page-head">
+  <div>
+    <p class="eyebrow">The address book</p>
+    <h1>Customers</h1>
+    <p class="admin-page-sub">
+      {{ totalCount() }} {{ totalCount() === 1 ? 'client' : 'clients' }} have shopped the
+      atelier. Open their order history and see what they love.
+    </p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn--sm btn--outline" routerLink="/admin/coupons">
+      <app-icon name="tag" [size]="13" />
+      Coupons
+    </a>
+    <a class="btn btn--sm btn--outline" routerLink="/admin/orders">
+      <app-icon name="package" [size]="13" />
+      Orders
+    </a>
+  </div>
+</header>
+
+<form class="admin-toolbar" (ngSubmit)="applyFilters()">
+  <div class="field admin-toolbar__search">
+    <label for="customerSearch">Search</label>
+    <input
+      id="customerSearch"
+      name="customerSearch"
+      [(ngModel)]="search"
+      placeholder="Name or email address"
+      autocomplete="off"
+    />
+  </div>
+
+  <button type="submit" class="btn btn--sm">Apply</button>
+  <button type="button" class="btn btn--sm btn--ghost" (click)="resetFilters()">
+    Reset
+  </button>
+  <span class="admin-toolbar__spacer"></span>
+  <span class="admin-toolbar__count">{{ totalCount() }} results</span>
+</form>
+
+@if (loading()) {
+  <div class="loading-state"><span class="spinner"></span> Loading the address book</div>
+} @else if (failed()) {
+  <div class="admin-empty">
+    <p>Customers could not load.</p>
+    <button type="button" class="btn btn--sm btn--outline mt-16" (click)="applyFilters()">
+      Try again
+    </button>
+  </div>
+} @else if (items().length === 0) {
+  <div class="admin-empty">
+    <p>No customers match this view.</p>
+    <button type="button" class="btn btn--sm btn--outline mt-16" (click)="resetFilters()">
+      Clear search
+    </button>
+  </div>
+} @else {
+  <div class="panel admin-panel--flush table-wrap">
+    <table class="data-table customer-table">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Orders</th>
+          <th>Total spent</th>
+          <th>Marketing</th>
+          <th>Joined</th>
+          <th>Last seen</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (customer of items(); track customer.id) {
+          <tr>
+            <td>
+              <div class="customer-cell">
+                <span class="customer-cell__avatar">{{ initials(customer.fullName) }}</span>
+                <div class="customer-cell__info">
+                  <span class="customer-cell__name">{{ customer.fullName }}</span>
+                  <a
+                    class="customer-cell__email"
+                    [href]="'mailto:' + customer.email"
+                  >
+                    {{ customer.email }}
+                  </a>
+                </div>
+              </div>
+            </td>
+            <td class="cell-muted">{{ customer.phone || '—' }}</td>
+            <td>
+              @if (customer.orderCount > 0) {
+                <a
+                  class="customer-orders"
+                  routerLink="/admin/orders"
+                  [queryParams]="{ search: customer.email }"
+                  title="View this customer's orders"
+                >
+                  {{ customer.orderCount }}
+                </a>
+              } @else {
+                <span class="cell-muted">0</span>
+              }
+            </td>
+            <td class="cell-nowrap cell-spend">
+              {{ customer.totalSpent | currency: 'INR' : 'symbol' : '1.0-0' }}
+            </td>
+            <td>
+              @if (customer.marketingOptIn) {
+                <span class="status status--active">Subscribed</span>
+              } @else {
+                <span class="status status--inactive">Not opted in</span>
+              }
+            </td>
+            <td class="cell-nowrap cell-muted">{{ customer.createdAt | date: 'MMM d, y' }}</td>
+            <td class="cell-nowrap cell-muted">
+              @if (customer.lastLoginAt) {
+                {{ customer.lastLoginAt | date: 'MMM d, y' }}
+              } @else {
+                Never
+              }
+            </td>
+            <td class="cell-actions">
+              <div class="admin-cell-actions">
+                <a
+                  class="admin-icon-btn"
+                  routerLink="/admin/orders"
+                  [queryParams]="{ search: customer.email }"
+                  aria-label="View customer orders"
+                  title="View orders"
+                >
+                  <app-icon name="chevron-right" [size]="14" />
+                </a>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalPages() > 1) {
+    <div class="admin-pagination">
+      <p class="admin-pagination__info">
+        Page {{ result()!.page }} of {{ totalPages() }} · {{ totalCount() }} customers
+      </p>
+      <div class="admin-pagination__pages">
+        <button
+          type="button"
+          [disabled]="result()!.page <= 1"
+          (click)="goToPage(result()!.page - 1)"
+          aria-label="Previous page"
+        >
+          <app-icon name="chevron-left" [size]="13" />
+        </button>
+        @for (page of pages(); track page) {
+          <button
+            type="button"
+            [class.is-active]="page === result()!.page"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+        }
+        <button
+          type="button"
+          [disabled]="result()!.page >= totalPages()"
+          (click)="goToPage(result()!.page + 1)"
+          aria-label="Next page"
+        >
+          <app-icon name="chevron-right" [size]="13" />
+        </button>
+      </div>
+    </div>
+  }
+}

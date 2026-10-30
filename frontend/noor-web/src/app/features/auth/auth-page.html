@@ -1,0 +1,194 @@
+<div class="auth">
+  <aside class="auth__aside">
+    <img class="auth__image" src="assets/story.svg" alt="" aria-hidden="true" />
+    <div class="auth__aside-content">
+      <a class="brand" routerLink="/">
+        <span class="brand__name">Noor</span>
+        <span class="brand__tag">Modest Atelier</span>
+      </a>
+
+      <div class="auth__quote">
+        <app-icon name="sparkle" [size]="20" />
+        <blockquote>
+          “Luxury is a fabric that feels like a deep breath.”
+        </blockquote>
+        <p>Considered modest wear, made slowly and worn often.</p>
+      </div>
+
+      <ul class="auth__notes">
+        <li><app-icon name="package" [size]="14" /> Follow every order</li>
+        <li><app-icon name="heart" [size]="14" /> Save pieces you love</li>
+        <li><app-icon name="truck" [size]="14" /> Check out faster</li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="auth__panel">
+    <div class="auth__panel-inner">
+      <a class="auth__back" routerLink="/">
+        <app-icon name="arrow-left" [size]="13" />
+        Back to the atelier
+      </a>
+
+      <p class="eyebrow">{{ isRegister() ? 'Join the atelier' : 'Welcome back' }}</p>
+      <h1>{{ isRegister() ? 'Create your account' : 'Sign in' }}</h1>
+      <p class="auth__intro">
+        @if (isRegister()) {
+          Save your favourite pieces, follow your orders, and check out in a few quiet
+          clicks.
+        } @else {
+          Sign in to your account to follow orders, revisit saved pieces, and check out
+          faster.
+        }
+      </p>
+
+      @if (errorMessage()) {
+        <div class="auth__error" role="alert">
+          <app-icon name="alert-circle" [size]="16" />
+          <p>{{ errorMessage() }}</p>
+        </div>
+      }
+
+      <form class="auth__form" (ngSubmit)="submit()" novalidate>
+        @if (isRegister()) {
+          <div class="field">
+            <label for="fullName">Full name</label>
+            <input
+              id="fullName"
+              name="fullName"
+              [(ngModel)]="fullName"
+              autocomplete="name"
+              placeholder="Your name"
+              required
+            />
+          </div>
+        }
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            required
+          />
+        </div>
+
+        @if (isRegister()) {
+          <div class="field">
+            <label for="phone">Phone (optional)</label>
+            <input
+              id="phone"
+              type="tel"
+              name="phone"
+              [(ngModel)]="phone"
+              autocomplete="tel"
+              placeholder="+91 (555) 000-0000"
+            />
+          </div>
+        }
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              name="password"
+              [(ngModel)]="password"
+              [autocomplete]="isRegister() ? 'new-password' : 'current-password'"
+              placeholder="••••••••"
+              required
+            />
+            <button
+              type="button"
+              (click)="togglePassword()"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            >
+              <app-icon name="eye" [size]="17" />
+            </button>
+          </div>
+          @if (isRegister()) {
+            <p class="field-hint">
+              At least 8 characters, with uppercase, lowercase, and a number.
+            </p>
+          }
+        </div>
+
+        @if (isRegister()) {
+          <div class="field">
+            <label for="confirmPassword">Confirm password</label>
+            <input
+              id="confirmPassword"
+              [type]="showPassword() ? 'text' : 'password'"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              autocomplete="new-password"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <label class="checkbox">
+            <input type="checkbox" name="marketing" [(ngModel)]="marketingOptIn" />
+            Send me the Noor letter — new pieces, atelier notes, and occasional early
+            access.
+          </label>
+
+          <label class="checkbox">
+            <input type="checkbox" name="terms" [(ngModel)]="acceptedTerms" />
+            I agree to the terms of service and privacy notice.
+          </label>
+        } @else {
+          <div class="auth__row">
+            <label class="checkbox">
+              <input type="checkbox" name="remember" checked />
+              Keep me signed in
+            </label>
+            <a class="auth__forgot" routerLink="/contact">Forgot password?</a>
+          </div>
+        }
+
+        <button class="btn btn--block auth__submit" type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Please wait…' : isRegister() ? 'Create account' : 'Sign in' }}
+          <app-icon name="arrow-right" [size]="15" />
+        </button>
+      </form>
+
+      <p class="auth__switch">
+        @if (isRegister()) {
+          Already have an account?
+          <a routerLink="/login">Sign in</a>
+        } @else {
+          New to Noor?
+          <a routerLink="/register">Create an account</a>
+        }
+      </p>
+
+      @if (!isRegister()) {
+        <div class="demo">
+          <p class="demo__title">
+            <app-icon name="info" [size]="13" />
+            Demonstration accounts
+          </p>
+          <div class="demo__options">
+            <button type="button" class="demo__option" (click)="useDemo('customer')">
+              <span>Client</span>
+              <strong>demo@noor.store</strong>
+              <em>Demo@12345</em>
+            </button>
+            <button type="button" class="demo__option" (click)="useDemo('admin')">
+              <span>Atelier admin</span>
+              <strong>admin@noor.store</strong>
+              <em>Admin@12345</em>
+            </button>
+          </div>
+          <p class="demo__note">Select an account to fill the form, then sign in.</p>
+        </div>
+      }
+    </div>
+  </main>
+</div>

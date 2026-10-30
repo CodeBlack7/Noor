@@ -1,0 +1,221 @@
+<header class="admin-page-head">
+  <div>
+    <p class="eyebrow">Catalogue</p>
+    <h1>Products</h1>
+    <p class="admin-page-sub">
+      {{ totalCount() }} {{ totalCount() === 1 ? 'piece' : 'pieces' }} in the atelier,
+      across {{ categories().length }} collections.
+    </p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn--sm btn--outline" routerLink="/admin/categories">
+      <app-icon name="book" [size]="14" />
+      Collections
+    </a>
+    <a class="btn btn--sm" routerLink="/admin/products/new">
+      <app-icon name="plus" [size]="14" />
+      New product
+    </a>
+  </div>
+</header>
+
+<form class="admin-toolbar" (ngSubmit)="applyFilters()">
+  <div class="field admin-toolbar__search">
+    <label for="productSearch">Search</label>
+    <input
+      id="productSearch"
+      name="productSearch"
+      [(ngModel)]="search"
+      placeholder="Name or SKU"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="field">
+    <label for="productCategory">Collection</label>
+    <select id="productCategory" name="productCategory" [(ngModel)]="categoryId">
+      <option [ngValue]="null">All collections</option>
+      @for (category of categories(); track category.id) {
+        <option [ngValue]="category.id">{{ category.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="productStatus">Status</label>
+    <select id="productStatus" name="productStatus" [(ngModel)]="statusFilter">
+      <option value="">All</option>
+      <option value="active">Published</option>
+      <option value="inactive">Hidden</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn--sm">Apply</button>
+  <button type="button" class="btn btn--sm btn--ghost" (click)="resetFilters()">
+    Reset
+  </button>
+  <span class="admin-toolbar__spacer"></span>
+  <span class="admin-toolbar__count">{{ totalCount() }} results</span>
+</form>
+
+@if (loading()) {
+  <div class="loading-state"><span class="spinner"></span> Loading the catalogue</div>
+} @else if (failed()) {
+  <div class="admin-empty">
+    <p>The catalogue could not load.</p>
+    <button type="button" class="btn btn--sm btn--outline mt-16" (click)="applyFilters()">
+      Try again
+    </button>
+  </div>
+} @else if (items().length === 0) {
+  <div class="admin-empty">
+    <p>No products match this view.</p>
+    <div class="admin-empty__actions">
+      <button type="button" class="btn btn--sm btn--outline" (click)="resetFilters()">
+        Clear filters
+      </button>
+      <a class="btn btn--sm" routerLink="/admin/products/new">Create a product</a>
+    </div>
+  </div>
+} @else {
+  <div class="panel admin-panel--flush table-wrap">
+    <table class="data-table admin-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Collection</th>
+          <th>Price</th>
+          <th>Inventory</th>
+          <th>Sold</th>
+          <th>Status</th>
+          <th>Updated</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of items(); track product.id) {
+          <tr>
+            <td>
+              <div class="product-cell">
+                <span class="product-cell__media">
+                  @if (product.imageUrl) {
+                    <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" />
+                  } @else {
+                    <app-icon name="image" [size]="18" />
+                  }
+                </span>
+                <div class="product-cell__info">
+                  <a class="product-cell__name" [routerLink]="['/admin/products', product.id, 'edit']">
+                    {{ product.name }}
+                  </a>
+                  <p class="product-cell__meta">
+                    {{ product.variantCount }}
+                    {{ product.variantCount === 1 ? 'variant' : 'variants' }} ·
+                    /{{ product.slug }}
+                  </p>
+                </div>
+              </div>
+            </td>
+            <td>{{ product.categoryName }}</td>
+            <td class="cell-nowrap">
+              {{ product.price | currency: 'INR' : 'symbol' : '1.0-0' }}
+              @if (product.compareAtPrice && product.compareAtPrice > product.price) {
+                <s class="cell-compare">
+                  {{ product.compareAtPrice | currency: 'INR' : 'symbol' : '1.0-0' }}
+                </s>
+              }
+            </td>
+            <td>
+              <span class="stock-pill stock-pill--{{ stockTone(product) }}">
+                {{ product.totalStock }} in stock
+              </span>
+            </td>
+            <td>{{ product.soldCount | number }}</td>
+            <td>
+              <div class="status-stack">
+                <span class="status {{ product.isActive ? 'status--active' : 'status--inactive' }}">
+                  {{ product.isActive ? 'Published' : 'Hidden' }}
+                </span>
+                @if (product.isFeatured) {
+                  <span class="badge badge--new">Featured</span>
+                }
+              </div>
+            </td>
+            <td class="cell-nowrap cell-muted">{{ product.updatedAt | date: 'MMM d, y' }}</td>
+            <td class="cell-actions">
+              <div class="admin-cell-actions">
+                <a
+                  class="admin-icon-btn"
+                  [routerLink]="['/product', product.slug]"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="View on storefront"
+                  title="View on storefront"
+                >
+                  <app-icon name="external-link" [size]="14" />
+                </a>
+                <a
+                  class="admin-icon-btn"
+                  [routerLink]="['/admin/products', product.id, 'edit']"
+                  aria-label="Edit product"
+                  title="Edit product"
+                >
+                  <app-icon name="edit" [size]="14" />
+                </a>
+                <button
+                  type="button"
+                  class="admin-icon-btn is-danger"
+                  [disabled]="deletingId() === product.id"
+                  (click)="deleteProduct(product)"
+                  aria-label="Delete product"
+                  title="Delete product"
+                >
+                  @if (deletingId() === product.id) {
+                    <span class="spinner spinner--sm"></span>
+                  } @else {
+                    <app-icon name="trash" [size]="14" />
+                  }
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalPages() > 1) {
+    <div class="admin-pagination">
+      <p class="admin-pagination__info">
+        Page {{ result()!.page }} of {{ totalPages() }} · {{ totalCount() }} products
+      </p>
+      <div class="admin-pagination__pages">
+        <button
+          type="button"
+          [disabled]="result()!.page <= 1"
+          (click)="goToPage(result()!.page - 1)"
+          aria-label="Previous page"
+        >
+          <app-icon name="chevron-left" [size]="13" />
+        </button>
+        @for (page of pages(); track page) {
+          <button
+            type="button"
+            [class.is-active]="page === result()!.page"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+        }
+        <button
+          type="button"
+          [disabled]="result()!.page >= totalPages()"
+          (click)="goToPage(result()!.page + 1)"
+          aria-label="Next page"
+        >
+          <app-icon name="chevron-right" [size]="13" />
+        </button>
+      </div>
+    </div>
+  }
+}

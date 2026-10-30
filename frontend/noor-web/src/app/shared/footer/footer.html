@@ -1,0 +1,91 @@
+<footer class="footer">
+  <div class="container footer__top">
+    <div class="footer__brand">
+      <a class="footer__logo" routerLink="/">
+        <span class="footer__logo-name">Noor</span>
+        <span class="footer__logo-tag">Modest Atelier</span>
+      </a>
+      <p class="footer__intro">
+        Considered modest wear, made slowly and worn often. Cut in breathable fabrics,
+        finished by hand, and designed to live with you for years.
+      </p>
+      <div class="footer__social">
+        <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+          <app-icon name="instagram" [size]="17" />
+        </a>
+        <a href="https://pinterest.com" target="_blank" rel="noopener" aria-label="Pinterest">
+          <app-icon name="pinterest" [size]="17" />
+        </a>
+        <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+          <app-icon name="facebook" [size]="17" />
+        </a>
+      </div>
+    </div>
+
+    <div class="footer__newsletter">
+      <p class="eyebrow">The Noor letter</p>
+      <h3>A little quiet in your inbox.</h3>
+      <p class="footer__note">
+        New pieces, atelier notes, and occasional early access. No noise, ever.
+      </p>
+      <form class="footer__form" (ngSubmit)="subscribe($event)">
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="newsletterEmail"
+          placeholder="Your email address"
+          autocomplete="email"
+          required
+          aria-label="Email address"
+        />
+        <button class="btn btn--light" type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Joining…' : 'Join' }}
+        </button>
+      </form>
+      <p class="footer__privacy">By joining you agree to our privacy notice. Unsubscribe anytime.</p>
+    </div>
+  </div>
+
+  <div class="container footer__links">
+    <div class="footer__col">
+      <h4>Shop</h4>
+      <a routerLink="/shop">All pieces</a>
+      @for (category of categories(); track category.id) {
+        <a routerLink="/shop" [queryParams]="{ category: category.slug }">{{ category.name }}</a>
+      }
+    </div>
+
+    <div class="footer__col">
+      <h4>Client care</h4>
+      <a routerLink="/contact">Contact us</a>
+      <a routerLink="/shipping-returns">Shipping &amp; returns</a>
+      <a routerLink="/size-guide">Size guide</a>
+      <a routerLink="/account/orders">Track an order</a>
+      <a routerLink="/login">Sign in</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Maison</h4>
+      <a routerLink="/our-story">Our story</a>
+      <a routerLink="/our-story">Craft &amp; fabric</a>
+      <a routerLink="/contact">Stockists</a>
+      <a routerLink="/contact">Press</a>
+    </div>
+
+    <div class="footer__col footer__contact">
+      <h4>Atelier</h4>
+      <p>12 Banjara Hills Road No. 3<br />Hyderabad, Telangana 500034</p>
+      <a href="mailto:care@noor.store">care@noor.store</a>
+      <a href="tel:+919849014820">+91 98490 14820</a>
+      <p class="footer__hours">Client care · Mon–Sat, 10–6 IST</p>
+    </div>
+  </div>
+
+  <div class="container footer__bottom">
+    <p>© {{ year }} Noor — Modest Atelier. All rights reserved.</p>
+    <p class="footer__demo">India-only storefront · cash on delivery only.</p>
+    <div class="footer__payments" aria-label="Payment methods">
+      <span>Cash on delivery</span>
+    </div>
+  </div>
+</footer>

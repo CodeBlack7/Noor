@@ -1,0 +1,96 @@
+<div class="admin">
+  @if (menuOpen()) {
+    <button
+      type="button"
+      class="admin__scrim"
+      (click)="menuOpen.set(false)"
+      aria-label="Close admin menu"
+    ></button>
+  }
+
+  <aside class="admin__sidebar" [class.is-open]="menuOpen()">
+    <div class="admin__brand">
+      <a routerLink="/" class="admin__logo">
+        <span class="admin__logo-name">Noor</span>
+        <span class="admin__logo-tag">Modest Atelier</span>
+      </a>
+      <span class="admin__label">Atelier admin</span>
+    </div>
+
+    <nav class="admin__nav" aria-label="Admin">
+      @for (group of groups; track group.heading) {
+        <p class="admin__nav-heading">{{ group.heading }}</p>
+        @for (item of group.items; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="is-active"
+            [routerLinkActiveOptions]="{ exact: item.path === '/admin/dashboard' }"
+          >
+            <app-icon [name]="item.icon" [size]="16" />
+            {{ item.label }}
+          </a>
+        }
+      }
+    </nav>
+
+    <div class="admin__sidebar-foot">
+      <a routerLink="/" class="admin__store-link">
+        <app-icon name="external-link" [size]="14" />
+        View storefront
+      </a>
+      <a routerLink="/account" class="admin__store-link">
+        <app-icon name="user" [size]="14" />
+        My account
+      </a>
+      <div class="admin__user">
+        <span class="admin__avatar">{{ initials() }}</span>
+        <div>
+          <strong>{{ session.user()?.fullName }}</strong>
+          <p>{{ session.user()?.email }}</p>
+        </div>
+      </div>
+      <button type="button" class="admin__signout" (click)="logout()">
+        <app-icon name="logout" [size]="14" />
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <div class="admin__main">
+    <header class="admin__topbar">
+      <button
+        type="button"
+        class="admin__burger"
+        (click)="menuOpen.set(true)"
+        aria-label="Open admin menu"
+      >
+        <app-icon name="menu" [size]="20" />
+      </button>
+
+      <div class="admin__crumb">
+        <span>Atelier admin</span>
+        <span class="admin__crumb-sep">/</span>
+        <strong>{{ pageTitle() }}</strong>
+      </div>
+
+      <div class="admin__topbar-actions">
+        <a routerLink="/" class="admin__view-store">
+          <app-icon name="external-link" [size]="13" />
+          View store
+        </a>
+        <a routerLink="/admin/dashboard" class="admin__topbar-avatar" aria-label="Dashboard">
+          {{ initials() }}
+        </a>
+      </div>
+    </header>
+
+    <main class="admin__content">
+      <router-outlet />
+    </main>
+
+    <footer class="admin__footer">
+      <p>Noor — Modest Atelier · Demonstration administration</p>
+      <p>SQL Server · .NET 8 · Angular</p>
+    </footer>
+  </div>
+</div>
