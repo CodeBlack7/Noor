@@ -92,6 +92,27 @@ The Angular dev server proxies `/api`, `/images`, and `/uploads` to `http://loca
 
 ---
 
+## Free demo deployment (Render)
+
+The repo ships a `Dockerfile` and a Render Blueprint (`render.yaml`) that host the whole app as **one free Docker web service**: the Angular bundle is built and served from the API's `wwwroot`, and SQL Server is swapped for SQLite so no database server is needed.
+
+1. Open the [Render Blueprint deploy page](https://render.com/deploy?repo=https://github.com/CodeBlack7/Noor) and sign in with GitHub.
+2. Approve the `noor-demo` service (Free plan, Singapore). Render generates the JWT secret for you.
+3. Wait for the first build (roughly 5–8 minutes), then open the service URL.
+
+Free-tier behaviour:
+
+- The instance sleeps after 15 minutes without traffic; the next request takes about a minute to wake it.
+- The SQLite file lives on ephemeral storage, so catalogue edits, uploads, and new orders reset whenever the service sleeps or redeploys. Seeded demo accounts and products return automatically.
+- To deploy manually instead of using the blueprint, create a Docker web service from this repo, choose the Free plan, and set:
+  - `ASPNETCORE_ENVIRONMENT=Production`
+  - `Database__Provider=Sqlite`
+  - `Database__AutoMigrate=true`
+  - `ConnectionStrings__DefaultConnection=Data Source=/tmp/noor.db`
+  - `Jwt__Secret` to any random string of 32+ characters
+
+---
+
 ## Demo accounts
 
 | Role | Email | Password |

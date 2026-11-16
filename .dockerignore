@@ -1,0 +1,16 @@
+.git
+.gitignore
+.vs
+.vscode
+.idea
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.angular
+backend/Noor.Api/wwwroot/uploads/*
+!backend/Noor.Api/wwwroot/uploads/.gitkeep
+*.db
+*.log
+tmp
+New Text Document.txt

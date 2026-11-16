@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noor.Core.Entities;
 
 namespace Noor.Infrastructure.Data;
@@ -27,6 +28,28 @@ public class NoorDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        if (Database.IsSqlite())
+        {
+            // SQLite has no decimal type, and EF Core cannot translate decimal comparisons,
+            // ordering or aggregates. Storing money as REAL keeps price sorting, filters,
+            // SUM and GROUP BY queries working for the free demo deployment.
+            foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetProperties()))
+            {
+                if (property.ClrType == typeof(decimal))
+                {
+                    property.SetValueConverter(
+                        new ValueConverter<decimal, double>(v => (double)v, v => (decimal)v));
+                }
+                else if (property.ClrType == typeof(decimal?))
+                {
+                    property.SetValueConverter(
+                        new ValueConverter<decimal?, double?>(
+                            v => v == null ? null : (double)v.Value,
+                            v => v == null ? null : (decimal)v.Value));
+                }
+            }
+        }
 
         modelBuilder.Entity<ApplicationUser>(b =>
         {

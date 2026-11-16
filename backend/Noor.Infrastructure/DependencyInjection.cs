@@ -18,9 +18,20 @@ public static class DependencyInjection
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
         services.Configure<StoreOptions>(configuration.GetSection("Store"));
 
+        var provider = configuration["Database:Provider"] ?? "SqlServer";
+
         services.AddDbContext<NoorDbContext>(options =>
-            options.UseSqlServer(connectionString,
-                sql => sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+        {
+            if (string.Equals(provider, "Sqlite", StringComparison.OrdinalIgnoreCase))
+            {
+                options.UseSqlite(connectionString);
+            }
+            else
+            {
+                options.UseSqlServer(connectionString,
+                    sql => sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+            }
+        });
 
         services.AddScoped<IPasswordHasher, Pbkdf2PasswordHasher>();
         services.AddScoped<ITokenService, JwtTokenService>();

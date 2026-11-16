@@ -1,0 +1,26 @@
+# Render Blueprint — free demo deployment.
+# Deploy: https://render.com/deploy?repo=https://github.com/CodeBlack7/Noor
+#
+# One free Docker web service serves the Angular storefront and the .NET API
+# from the same origin. Data lives in a SQLite file on the ephemeral disk, so
+# the demo reseeds itself whenever the service sleeps or redeploys.
+services:
+  - type: web
+    name: noor-demo
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Database__Provider
+        value: Sqlite
+      - key: Database__AutoMigrate
+        value: "true"
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=/tmp/noor.db
+      - key: Jwt__Secret
+        generateValue: true
