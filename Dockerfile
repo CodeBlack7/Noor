@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- Angular storefront -------------------------------------------------
-FROM node:22-alpine AS web
+FROM node:22-bookworm-slim AS web
 WORKDIR /src/frontend/noor-web
 COPY frontend/noor-web/package.json frontend/noor-web/package-lock.json ./
 RUN npm ci --no-audit --no-fund
